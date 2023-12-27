@@ -1,0 +1,11 @@
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Itmo.Dev.Asap.BanMachine.Infrastructure.ML.Extensions;
+
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddInfrastructureMachineLearning(this IServiceCollection collection)
+    {
+        return collection;
+    }
+}
