@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package itmo.dev.asap.ban_machine;
+
+option csharp_namespace = "Itmo.Dev.Asap.BanMachine.Models";
+
+message SubmissionData {
+  string submission_id = 1;
+  string user_id = 2;
+  string assignment_id = 3;
+  string file_link = 4;
+}

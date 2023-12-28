@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package itmo.dev.asap.ban_machine;
+
+option csharp_namespace = "Itmo.Dev.Asap.BanMachine.Models";
+
+message SubmissionPairAnalysisResultData {
+  string first_submission_id = 1;
+  string second_submission_id = 2;
+  double similarity_score = 3;
+}

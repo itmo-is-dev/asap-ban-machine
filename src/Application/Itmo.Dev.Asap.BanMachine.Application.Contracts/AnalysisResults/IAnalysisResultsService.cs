@@ -6,7 +6,7 @@ public interface IAnalysisResultsService
         GetResultsData.Request request,
         CancellationToken cancellationToken);
 
-    Task<GetResultCodeBlocks.Response> GetAnalysisResultCodeBlocks(
+    Task<GetResultCodeBlocks.Response> GetAnalysisResultCodeBlocksAsync(
         GetResultCodeBlocks.Request request,
         CancellationToken cancellationToken);
 }

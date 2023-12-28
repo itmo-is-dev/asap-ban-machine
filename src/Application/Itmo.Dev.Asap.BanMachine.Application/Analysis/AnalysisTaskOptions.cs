@@ -1,4 +1,4 @@
-namespace Itmo.Dev.Asap.BanMachine.Application.Analysis.Options;
+namespace Itmo.Dev.Asap.BanMachine.Application.Analysis;
 
 public class AnalysisTaskOptions
 {

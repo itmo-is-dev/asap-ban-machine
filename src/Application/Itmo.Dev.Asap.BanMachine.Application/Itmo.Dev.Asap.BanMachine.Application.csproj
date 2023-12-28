@@ -7,6 +7,7 @@
     <PackageReference Include="Itmo.Dev.Platform.BackgroundTasks" />
     <PackageReference Include="Itmo.Dev.Platform.Locking" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="System.Linq.Async" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package itmo.dev.asap.ban_machine;
+
+option csharp_namespace = "Itmo.Dev.Asap.BanMachine.Models";
+
+message CodeBlock {
+  string file_path = 1;
+  int32 line_from = 2;
+  int32 line_to = 3;
+  string content = 4;
+}

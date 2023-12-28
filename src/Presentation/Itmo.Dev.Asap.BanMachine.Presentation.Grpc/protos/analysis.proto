@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package itmo.dev.asap.ban_machine;
+
+option csharp_namespace = "Itmo.Dev.Asap.BanMachine";
+
+import "models/submission_data.proto";
+
+service AnalysisService {
+  rpc Create(CreateAnalysisRequest) returns (CreateAnalysisResponse);
+  rpc AddData(AddAnalysisDataRequest) returns (AddAnalysisDataResponse);
+  rpc Start(StartAnalysisRequest) returns (StartAnalysisResponse);
+}
+
+message CreateAnalysisRequest {
+}
+
+message CreateAnalysisResponse {
+  string analysis_id = 1;
+}
+
+message AddAnalysisDataRequest {
+  string analysis_id = 1;
+  repeated SubmissionData submission_data = 2; 
+}
+
+message AddAnalysisDataResponse {
+  oneof result {
+    Success success = 1;
+    AlreadyRunning already_running = 2;
+  }
+  
+  message Success {
+  }
+  
+  message AlreadyRunning {
+  }
+}
+
+message StartAnalysisRequest {
+  string analysis_id = 1;
+}
+
+message StartAnalysisResponse {
+  oneof result {
+    Success success = 1;
+    AlreadyRunning already_running = 2;
+    AlreadyFinished already_finished = 3;
+  }
+  
+  message Success {
+  }
+  
+  message AlreadyRunning {
+  }
+  
+  message AlreadyFinished {
+  }
+}

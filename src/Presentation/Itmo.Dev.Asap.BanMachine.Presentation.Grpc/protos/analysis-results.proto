@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package itmo.dev.asap.ban_machine;
+
+option csharp_namespace = "Itmo.Dev.Asap.BanMachine";
+
+import "models/submission_pair_analysis_result_data.proto";
+import "models/similar_code_blocks.proto";
+import "google/protobuf/wrappers.proto";
+
+service AnalysisResultsService {
+  rpc GetAnalysisResultsData(GetAnalysisResultsDataRequest) returns (GetAnalysisResultsDataResponse);
+  rpc GetAnalysisResultCodeBlocks(GetAnalysisResultCodeBlocksRequest) returns (GetAnalysisResultCodeBlocksResponse);
+}
+
+message GetAnalysisResultsDataRequest {
+  string analysis_id = 1;
+  google.protobuf.StringValue page_token = 2;
+}
+
+message GetAnalysisResultsDataResponse {
+  oneof result {
+    Success success = 1;
+    AnalysisNotFound analysis_not_found = 2;
+  }
+  
+  message Success {
+    repeated SubmissionPairAnalysisResultData data = 1;
+    google.protobuf.StringValue page_token = 2;
+  }
+  
+  message AnalysisNotFound {
+  }
+}
+
+message GetAnalysisResultCodeBlocksRequest {
+  string analysis_id = 1;
+  string first_submission_id = 2;
+  string second_submission_id = 3;
+  double minimum_similarity_score = 4;
+  int32 cursor = 5;
+}
+
+message GetAnalysisResultCodeBlocksResponse {
+  oneof result {
+    Success success = 1;
+    AnalysisNotFound analysis_not_found = 2;
+  }
+  
+  message Success {
+    repeated SimilarCodeBlocks code_blocks = 1;
+  }
+  
+  message AnalysisNotFound {
+  }
+}

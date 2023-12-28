@@ -1,6 +1,6 @@
 using Itmo.Dev.Asap.BanMachine.Application.Abstractions.Persistence.Queries;
 using Itmo.Dev.Asap.BanMachine.Application.Abstractions.Persistence.Repositories;
-using Itmo.Dev.Asap.BanMachine.Application.Analysis.AnalysisBackgroundTask;
+using Itmo.Dev.Asap.BanMachine.Application.Analysis;
 using Itmo.Dev.Asap.BanMachine.Application.Contracts.AnalysisResults;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Analysis;
 using Itmo.Dev.Platform.BackgroundTasks.Models;
@@ -58,7 +58,7 @@ public class AnalysisResultsService : IAnalysisResultsService
         return new GetResultsData.Response.Success(data, pageToken);
     }
 
-    public async Task<GetResultCodeBlocks.Response> GetAnalysisResultCodeBlocks(
+    public async Task<GetResultCodeBlocks.Response> GetAnalysisResultCodeBlocksAsync(
         GetResultCodeBlocks.Request request,
         CancellationToken cancellationToken)
     {

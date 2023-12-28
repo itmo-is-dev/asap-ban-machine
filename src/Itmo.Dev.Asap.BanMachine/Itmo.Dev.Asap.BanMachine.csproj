@@ -19,4 +19,9 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Itmo.Dev.Platform.Logging" />
+      <PackageReference Include="Itmo.Dev.Platform.YandexCloud" />
+    </ItemGroup>
+
 </Project>

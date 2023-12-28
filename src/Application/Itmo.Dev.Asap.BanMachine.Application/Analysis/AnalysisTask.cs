@@ -3,7 +3,6 @@ using Itmo.Dev.Asap.BanMachine.Application.Abstractions.BanMachine.Models;
 using Itmo.Dev.Asap.BanMachine.Application.Abstractions.Persistence.Queries;
 using Itmo.Dev.Asap.BanMachine.Application.Abstractions.Persistence.Repositories;
 using Itmo.Dev.Asap.BanMachine.Application.Abstractions.Submissions;
-using Itmo.Dev.Asap.BanMachine.Application.Analysis.Options;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Analysis;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Submissions;
 using Itmo.Dev.Platform.BackgroundTasks.Tasks;
@@ -14,7 +13,7 @@ using Microsoft.Extensions.Options;
 using Npgsql;
 using System.Data;
 
-namespace Itmo.Dev.Asap.BanMachine.Application.Analysis.AnalysisBackgroundTask;
+namespace Itmo.Dev.Asap.BanMachine.Application.Analysis;
 
 public class AnalysisTask :
     IBackgroundTask<AnalysisTaskMetadata, AnalysisTaskExecutionMetadata, EmptyExecutionResult, EmptyError>

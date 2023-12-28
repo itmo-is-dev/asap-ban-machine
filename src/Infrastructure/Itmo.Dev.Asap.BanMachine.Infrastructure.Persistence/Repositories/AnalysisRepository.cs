@@ -153,6 +153,7 @@ internal class AnalysisRepository : IAnalysisRepository
             analysis_id = :analysis_id
             and analysis_result_code_block_first_submission_id = :fist_submission_id
             and analysis_result_code_block_second_submission_id = :second_submission_id
+            and analysis_result_code_block_similarity_score >= :minimum_similarity_score 
         order by analysis_result_code_block_id
         offset :cursor
         limit :page_size;
@@ -164,6 +165,7 @@ internal class AnalysisRepository : IAnalysisRepository
             .AddParameter("analysis_id", query.AnalysisId.Value)
             .AddParameter("fist_submission_id", query.FirstSubmissionId)
             .AddParameter("second_submission_id", query.SecondSubmissionId)
+            .AddParameter("minimum_similarity_score", query.MinimumSimilarityScore)
             .AddParameter("cursor", query.Cursor)
             .AddParameter("page_size", query.PageSize);
 

@@ -1,6 +1,6 @@
 using Itmo.Dev.Platform.BackgroundTasks.Tasks.ExecutionMetadata;
 
-namespace Itmo.Dev.Asap.BanMachine.Application.Analysis.AnalysisBackgroundTask;
+namespace Itmo.Dev.Asap.BanMachine.Application.Analysis;
 
 public class AnalysisTaskExecutionMetadata : IBackgroundTaskExecutionMetadata
 {
