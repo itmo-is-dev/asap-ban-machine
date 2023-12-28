@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package itmo.dev.asap.kafka;
+
+option csharp_namespace = "Itmo.Dev.Asap.Kafka";
+
+message BanMachineAnalysisKey {
+  string analysis_key = 1;
+}
+
+message BanMachineAnalysisValue {
+  oneof event {
+    AnalysisCompleted analysis_completed = 1;
+  }
+
+  message AnalysisCompleted {
+  }
+}

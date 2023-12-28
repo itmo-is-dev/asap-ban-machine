@@ -11,6 +11,7 @@
       <ProjectReference Include="..\Infrastructure\Itmo.Dev.Asap.BanMachine.Infrastructure.ML\Itmo.Dev.Asap.BanMachine.Infrastructure.ML.csproj" />
       <ProjectReference Include="..\Infrastructure\Itmo.Dev.Asap.BanMachine.Infrastructure.Persistence\Itmo.Dev.Asap.BanMachine.Infrastructure.Persistence.csproj" />
       <ProjectReference Include="..\Presentation\Itmo.Dev.Asap.BanMachine.Presentation.Grpc\Itmo.Dev.Asap.BanMachine.Presentation.Grpc.csproj" />
+      <ProjectReference Include="..\Presentation\Itmo.Dev.Asap.BanMachine.Presentation.Kafka\Itmo.Dev.Asap.BanMachine.Presentation.Kafka.csproj" />
     </ItemGroup>
 
     <ItemGroup>

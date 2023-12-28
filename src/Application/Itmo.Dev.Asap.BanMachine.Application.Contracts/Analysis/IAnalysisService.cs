@@ -1,3 +1,5 @@
+using Itmo.Dev.Asap.BanMachine.Application.Contracts.Analysis.Operations;
+
 namespace Itmo.Dev.Asap.BanMachine.Application.Contracts.Analysis;
 
 public interface IAnalysisService

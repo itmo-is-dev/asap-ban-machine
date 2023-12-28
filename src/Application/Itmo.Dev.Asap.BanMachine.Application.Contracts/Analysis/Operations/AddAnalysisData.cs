@@ -1,7 +1,7 @@
 using Itmo.Dev.Asap.BanMachine.Application.Models.Analysis;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Submissions;
 
-namespace Itmo.Dev.Asap.BanMachine.Application.Contracts.Analysis;
+namespace Itmo.Dev.Asap.BanMachine.Application.Contracts.Analysis.Operations;
 
 public static class AddAnalysisData
 {

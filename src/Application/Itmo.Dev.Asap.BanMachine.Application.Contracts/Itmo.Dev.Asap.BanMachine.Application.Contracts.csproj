@@ -2,4 +2,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Itmo.Dev.Asap.BanMachine.Application.Models\Itmo.Dev.Asap.BanMachine.Application.Models.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Itmo.Dev.Platform.Events" />
+  </ItemGroup>
 </Project>

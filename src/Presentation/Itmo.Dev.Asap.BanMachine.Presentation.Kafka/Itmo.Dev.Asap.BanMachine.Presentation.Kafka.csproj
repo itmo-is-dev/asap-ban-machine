@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="Grpc.Tools"/>
+        <PackageReference Include="Itmo.Dev.Platform.Kafka"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="protos\*.proto" GrpcServices="None"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Application\Itmo.Dev.Asap.BanMachine.Application.Contracts\Itmo.Dev.Asap.BanMachine.Application.Contracts.csproj"/>
+    </ItemGroup>
+
+</Project>

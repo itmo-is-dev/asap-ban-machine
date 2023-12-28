@@ -3,11 +3,13 @@ using Itmo.Dev.Asap.BanMachine.Application.Abstractions.BanMachine.Models;
 using Itmo.Dev.Asap.BanMachine.Application.Abstractions.Persistence.Queries;
 using Itmo.Dev.Asap.BanMachine.Application.Abstractions.Persistence.Repositories;
 using Itmo.Dev.Asap.BanMachine.Application.Abstractions.Submissions;
+using Itmo.Dev.Asap.BanMachine.Application.Contracts.Analysis.Events;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Analysis;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Submissions;
 using Itmo.Dev.Platform.BackgroundTasks.Tasks;
 using Itmo.Dev.Platform.BackgroundTasks.Tasks.Errors;
 using Itmo.Dev.Platform.BackgroundTasks.Tasks.Results;
+using Itmo.Dev.Platform.Events;
 using Itmo.Dev.Platform.Postgres.Transactions;
 using Microsoft.Extensions.Options;
 using Npgsql;
@@ -23,18 +25,21 @@ public class AnalysisTask :
     private readonly AnalysisTaskOptions _options;
     private readonly ISubmissionContentLoader _submissionContentLoader;
     private readonly IPostgresTransactionProvider _transactionProvider;
+    private readonly IEventPublisher _eventPublisher;
 
     public AnalysisTask(
         IBanMachineService banMachineService,
         IAnalysisRepository analysisRepository,
         IOptions<AnalysisTaskOptions> options,
         ISubmissionContentLoader submissionContentLoader,
-        IPostgresTransactionProvider transactionProvider)
+        IPostgresTransactionProvider transactionProvider,
+        IEventPublisher eventPublisher)
     {
         _banMachineService = banMachineService;
         _analysisRepository = analysisRepository;
         _submissionContentLoader = submissionContentLoader;
         _transactionProvider = transactionProvider;
+        _eventPublisher = eventPublisher;
         _options = options.Value;
     }
 
@@ -87,6 +92,9 @@ public class AnalysisTask :
             executionMetadata.SecondSubmissionId = lastPair.Second.SubmissionId;
         }
         while (true);
+
+        var evt = new AnalysisCompletedEvent(executionContext.Metadata.AnalysisId);
+        await _eventPublisher.PublishAsync(evt, default);
 
         return new BackgroundTaskExecutionResult<EmptyExecutionResult, EmptyError>.Success(EmptyExecutionResult.Value);
     }

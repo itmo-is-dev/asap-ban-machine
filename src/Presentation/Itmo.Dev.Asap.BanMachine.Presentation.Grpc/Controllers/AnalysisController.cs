@@ -1,5 +1,6 @@
 using Grpc.Core;
 using Itmo.Dev.Asap.BanMachine.Application.Contracts.Analysis;
+using Itmo.Dev.Asap.BanMachine.Application.Contracts.Analysis.Operations;
 using Itmo.Dev.Asap.BanMachine.Presentation.Grpc.Mapping;
 
 namespace Itmo.Dev.Asap.BanMachine.Presentation.Grpc.Controllers;

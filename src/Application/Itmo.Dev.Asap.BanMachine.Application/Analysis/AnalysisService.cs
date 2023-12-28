@@ -1,5 +1,6 @@
 using Itmo.Dev.Asap.BanMachine.Application.Abstractions.Persistence.Repositories;
 using Itmo.Dev.Asap.BanMachine.Application.Contracts.Analysis;
+using Itmo.Dev.Asap.BanMachine.Application.Contracts.Analysis.Operations;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Analysis;
 using Itmo.Dev.Platform.BackgroundTasks.Extensions;
 using Itmo.Dev.Platform.BackgroundTasks.Managing;
