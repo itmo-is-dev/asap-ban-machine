@@ -3,6 +3,8 @@
     <ProjectReference Include="..\..\Application\Itmo.Dev.Asap.BanMachine.Application.Abstractions\Itmo.Dev.Asap.BanMachine.Application.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Itmo.Dev.Platform.Postgres" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
   </ItemGroup>
 </Project>

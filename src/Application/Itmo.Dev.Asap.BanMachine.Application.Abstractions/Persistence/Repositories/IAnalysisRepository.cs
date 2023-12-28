@@ -6,8 +6,6 @@ namespace Itmo.Dev.Asap.BanMachine.Application.Abstractions.Persistence.Reposito
 
 public interface IAnalysisRepository
 {
-    Task<AnalysisId> CreateAsync(CancellationToken cancellationToken);
-
     IAsyncEnumerable<SubmissionDataPair> QueryDataPairsAsync(
         AnalysisDataQuery query,
         CancellationToken cancellationToken);
@@ -19,6 +17,8 @@ public interface IAnalysisRepository
     IAsyncEnumerable<SimilarCodeBlocks> QueryAnalysisResultCodeBlocks(
         AnalysisResultCodeBlocksQuery query,
         CancellationToken cancellationToken);
+
+    Task<AnalysisId> CreateAsync(CancellationToken cancellationToken);
 
     Task AddDataAsync(
         AnalysisId analysisId,
