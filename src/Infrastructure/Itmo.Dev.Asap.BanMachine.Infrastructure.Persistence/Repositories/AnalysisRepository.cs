@@ -209,6 +209,7 @@ internal class AnalysisRepository : IAnalysisRepository
         (analysis_id, analysis_data_submission_id, analysis_data_user_id, analysis_data_assignment_id, analysis_data_file_link)
         select :analysis_id, * 
         from unnest(:submission_ids, :user_ids, :assignment_ids, :file_links)
+        on conflict do update set analysis_data_file_link = excluded.analysis_data_file_link;
         """;
 
         NpgsqlConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);

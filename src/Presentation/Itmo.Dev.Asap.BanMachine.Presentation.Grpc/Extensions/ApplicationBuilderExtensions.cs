@@ -5,7 +5,7 @@ namespace Itmo.Dev.Asap.BanMachine.Presentation.Grpc.Extensions;
 
 public static class ApplicationBuilderExtensions
 {
-    public static IApplicationBuilder UseGrpcPresentation(this IApplicationBuilder builder)
+    public static IApplicationBuilder UsePresentationGrpc(this IApplicationBuilder builder)
     {
         builder.UseEndpoints(x =>
         {

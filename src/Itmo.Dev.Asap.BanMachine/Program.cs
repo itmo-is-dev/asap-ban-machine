@@ -35,6 +35,6 @@ builder.Services.AddUtcDateTimeProvider();
 
 WebApplication app = builder.Build();
 
-app.UseGrpcPresentation();
+app.UsePresentationGrpc();
 
 await app.RunAsync();
