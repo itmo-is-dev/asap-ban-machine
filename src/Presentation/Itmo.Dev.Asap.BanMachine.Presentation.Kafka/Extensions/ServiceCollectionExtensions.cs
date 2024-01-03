@@ -13,15 +13,14 @@ public static class ServiceCollectionExtensions
     {
         const string producerKey = "Presentation:Kafka:Producers";
 
-        string host = configuration.GetSection("Presentation:Kafka:Host").Get<string>() ?? string.Empty;
-
-        collection.AddKafkaProducer<BanMachineAnalysisKey, BanMachineAnalysisValue>(builder => builder
-            .SerializeKeyWithProto()
-            .SerializeValueWithProto()
-            .UseNamedOptionsConfiguration(
-                "BanMachineAnalysis",
-                configuration.GetSection($"{producerKey}:BanMachineAnalysis"),
-                c => c.WithHost(host)));
+        collection.AddKafka(builder => builder
+            .ConfigureOptions(b => b.BindConfiguration("Presentation:Kafka"))
+            .AddProducer<BanMachineAnalysisKey, BanMachineAnalysisValue>(selector => selector
+                .SerializeKeyWithProto()
+                .SerializeValueWithProto()
+                .UseNamedOptionsConfiguration(
+                    "BanMachineAnalysis",
+                    configuration.GetSection($"{producerKey}:BanMachineAnalysis"))));
 
         return collection;
     }
