@@ -28,28 +28,34 @@ internal class AnalysisRepository : IAnalysisRepository
             select *
             from analysis_data
             where analysis_id = :analysis_id
-        )
-        select f.analysis_data_assignment_id as assignment_id, 
+        ),
+        data_pairs as
+        (
+            select f.analysis_data_assignment_id as assignment_id, 
                f.analysis_data_submission_id as first_submission_id, 
                f.analysis_data_user_id as fist_user_id, 
                f.analysis_data_file_link as first_file_link, 
                s.analysis_data_submission_id as second_submission_id, 
                s.analysis_data_user_id as second_user_id,
                s.analysis_data_file_link as second_file_link
-        from current_analysis_data f
-        join current_analysis_data s on 
-            f.analysis_data_submission_id != s.analysis_data_submission_id 
-            and f.analysis_data_assignment_id = s.analysis_data_assignment_id
+            from current_analysis_data f
+            join current_analysis_data s on 
+                f.analysis_data_submission_id != s.analysis_data_submission_id 
+                and f.analysis_data_assignment_id = s.analysis_data_assignment_id
+            order by f.analysis_data_submission_id, s.analysis_data_submission_id
+        )
+        select *
+        from data_pairs
         where 
-            (:should_ignore_first_filter or f.analysis_data_submission_id >= :fist_submission_id)
+            first_submission_id < second_submission_id
+            and (:should_ignore_first_filter or first_submission_id >= :fist_submission_id)
             and 
             (
                 :should_ignore_first_filter 
                 or :should_ignore_second_filter
-                or f.analysis_data_submission_id != :fist_submission_id 
-                or s.analysis_data_submission_id > :second_submission_id
+                or first_submission_id != :fist_submission_id 
+                or second_submission_id > :second_submission_id
             )
-        order by f.analysis_data_submission_id, s.analysis_data_submission_id
         limit :page_size;
         """;
 
