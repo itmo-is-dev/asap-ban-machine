@@ -43,6 +43,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{FDB3B0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Itmo.Dev.Asap.BanMachine.Presentation.Kafka", "src\Presentation\Itmo.Dev.Asap.BanMachine.Presentation.Kafka\Itmo.Dev.Asap.BanMachine.Presentation.Kafka.csproj", "{1B79D666-69BF-4F69-AA71-8C43870BF8D0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{D394A62B-8270-408A-BB1D-D87652F9E361}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\purge-allure-history.yml = .github\workflows\purge-allure-history.yml
+		.github\workflows\dotnet-build.yml = .github\workflows\dotnet-build.yml
+		.github\workflows\deploy.yml = .github\workflows\deploy.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Itmo.Dev.Asap.BanMachine.Infrastructure.ContentLoader", "src\Infrastructure\Itmo.Dev.Asap.BanMachine.Infrastructure.ContentLoader\Itmo.Dev.Asap.BanMachine.Infrastructure.ContentLoader.csproj", "{861D78F0-10BE-4B01-828E-A11380151713}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +71,8 @@ Global
 		{37C6FE3B-0BE1-4592-990D-23B4277BB4AD} = {B0B0B802-EE45-4A3F-935E-CE979F42B8B8}
 		{FDB3B0CA-F25E-4BB0-A47E-E364F8CD7CFD} = {0E3ACC7E-64FB-4F09-8910-679131BA65D5}
 		{1B79D666-69BF-4F69-AA71-8C43870BF8D0} = {8DBC045A-F04D-416A-959E-94703B3D5448}
+		{D394A62B-8270-408A-BB1D-D87652F9E361} = {0E3ACC7E-64FB-4F09-8910-679131BA65D5}
+		{861D78F0-10BE-4B01-828E-A11380151713} = {B0B0B802-EE45-4A3F-935E-CE979F42B8B8}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{733BA0AE-6DD8-43C3-B64A-DCA8AC396AD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -100,5 +111,9 @@ Global
 		{1B79D666-69BF-4F69-AA71-8C43870BF8D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B79D666-69BF-4F69-AA71-8C43870BF8D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B79D666-69BF-4F69-AA71-8C43870BF8D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{861D78F0-10BE-4B01-828E-A11380151713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{861D78F0-10BE-4B01-828E-A11380151713}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{861D78F0-10BE-4B01-828E-A11380151713}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{861D78F0-10BE-4B01-828E-A11380151713}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

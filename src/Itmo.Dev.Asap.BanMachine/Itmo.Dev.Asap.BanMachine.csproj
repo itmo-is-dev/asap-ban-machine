@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Application\Itmo.Dev.Asap.BanMachine.Application\Itmo.Dev.Asap.BanMachine.Application.csproj" />
+      <ProjectReference Include="..\Infrastructure\Itmo.Dev.Asap.BanMachine.Infrastructure.ContentLoader\Itmo.Dev.Asap.BanMachine.Infrastructure.ContentLoader.csproj" />
       <ProjectReference Include="..\Infrastructure\Itmo.Dev.Asap.BanMachine.Infrastructure.ML\Itmo.Dev.Asap.BanMachine.Infrastructure.ML.csproj" />
       <ProjectReference Include="..\Infrastructure\Itmo.Dev.Asap.BanMachine.Infrastructure.Persistence\Itmo.Dev.Asap.BanMachine.Infrastructure.Persistence.csproj" />
       <ProjectReference Include="..\Presentation\Itmo.Dev.Asap.BanMachine.Presentation.Grpc\Itmo.Dev.Asap.BanMachine.Presentation.Grpc.csproj" />

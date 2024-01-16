@@ -103,9 +103,11 @@ public class AnalysisTask :
         SubmissionDataPair dataPair,
         CancellationToken cancellationToken)
     {
-        Task<SubmissionContent> fistContentTask = _submissionContentLoader.LoadAsync(dataPair.First, cancellationToken);
-        Task<SubmissionContent> secondContentTask =
-            _submissionContentLoader.LoadAsync(dataPair.Second, cancellationToken);
+        Task<SubmissionContent> fistContentTask = _submissionContentLoader
+            .LoadAsync(dataPair.First, cancellationToken);
+
+        Task<SubmissionContent> secondContentTask = _submissionContentLoader
+            .LoadAsync(dataPair.Second, cancellationToken);
 
         await Task.WhenAll(fistContentTask, secondContentTask);
 

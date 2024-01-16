@@ -1,4 +1,5 @@
 using Itmo.Dev.Asap.BanMachine.Application.Extensions;
+using Itmo.Dev.Asap.BanMachine.Infrastructure.ContentLoader;
 using Itmo.Dev.Asap.BanMachine.Infrastructure.ML.Extensions;
 using Itmo.Dev.Asap.BanMachine.Infrastructure.Persistence.Extensions;
 using Itmo.Dev.Asap.BanMachine.Presentation.Grpc.Extensions;
@@ -16,6 +17,7 @@ await builder.AddYandexCloudConfigurationAsync();
 
 builder.Services
     .AddApplication()
+    .AddInfrastructureContentLoader()
     .AddInfrastructureMachineLearning()
     .AddInfrastructurePersistence()
     .AddPresentationGrpc()

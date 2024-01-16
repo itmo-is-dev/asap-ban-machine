@@ -1,3 +1,9 @@
 namespace Itmo.Dev.Asap.BanMachine.Application.Models.Submissions;
 
-public record struct SubmissionContent(Guid SubmissionId, IReadOnlyCollection<FileData> Files);
+public readonly record struct SubmissionContent(Guid SubmissionId, Stream Content) : IAsyncDisposable
+{
+    public ValueTask DisposeAsync()
+    {
+        return Content.DisposeAsync();
+    }
+}
