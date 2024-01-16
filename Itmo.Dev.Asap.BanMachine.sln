@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{FDB3B0
 	ProjectSection(SolutionItems) = preProject
 		docker\docker-compose.yaml = docker\docker-compose.yaml
 		docker\.env = docker\.env
+		.dockerignore = .dockerignore
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Itmo.Dev.Asap.BanMachine.Presentation.Kafka", "src\Presentation\Itmo.Dev.Asap.BanMachine.Presentation.Kafka\Itmo.Dev.Asap.BanMachine.Presentation.Kafka.csproj", "{1B79D666-69BF-4F69-AA71-8C43870BF8D0}"
