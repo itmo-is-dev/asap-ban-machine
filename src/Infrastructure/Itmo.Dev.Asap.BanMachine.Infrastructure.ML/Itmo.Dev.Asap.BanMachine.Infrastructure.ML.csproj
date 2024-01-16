@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
         <ProjectReference Include="..\..\Application\Itmo.Dev.Asap.BanMachine.Application.Abstractions\Itmo.Dev.Asap.BanMachine.Application.Abstractions.csproj" />
+        <ProjectReference Include="..\..\Application\Itmo.Dev.Asap.BanMachine.Application.Contracts\Itmo.Dev.Asap.BanMachine.Application.Contracts.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="CliWrap" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     </ItemGroup>
     <ItemGroup>
