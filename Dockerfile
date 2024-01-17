@@ -30,4 +30,6 @@ RUN apt-get update \
 
 RUN ln -s /usr/bin/python3.9 /usr/bin/python3
 
+RUN python -m pip install pip_install_privates
+
 ENTRYPOINT ["dotnet", "Itmo.Dev.Asap.BanMachine.dll"]
