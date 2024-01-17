@@ -11,11 +11,16 @@ using Itmo.Dev.Platform.Common.Extensions;
 using Itmo.Dev.Platform.Events;
 using Itmo.Dev.Platform.Logging.Extensions;
 using Itmo.Dev.Platform.YandexCloud.Extensions;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddUserSecrets<Program>();
 await builder.AddYandexCloudConfigurationAsync();
+
+builder.Services.AddOptions<JsonSerializerSettings>();
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<JsonSerializerSettings>>().Value);
 
 builder.Services
     .AddApplication()
