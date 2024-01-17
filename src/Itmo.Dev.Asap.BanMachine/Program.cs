@@ -1,3 +1,5 @@
+#pragma warning disable CA1506
+
 using Itmo.Dev.Asap.BanMachine.Application.Extensions;
 using Itmo.Dev.Asap.BanMachine.Infrastructure.ContentLoader;
 using Itmo.Dev.Asap.BanMachine.Infrastructure.ML.Extensions;
@@ -35,8 +37,17 @@ builder.Services.AddPlatformEvents(b => b
 builder.Host.AddPlatformSerilog(builder.Configuration);
 builder.Services.AddUtcDateTimeProvider();
 
+builder.Services.AddControllers();
+
 WebApplication app = builder.Build();
 
+await using (AsyncServiceScope scope = app.Services.CreateAsyncScope())
+{
+    await scope.UsePlatformBackgroundTasksAsync(default);
+}
+
+app.UseRouting();
 app.UsePresentationGrpc();
 
 await app.RunAsync();
+#pragma warning restore CA1506
