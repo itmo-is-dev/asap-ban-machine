@@ -18,13 +18,9 @@ public class PythonRestoreBackgroundService : BackgroundService
     {
         string pypiToken = _options.PyPiToken;
 
-        await Cli.Wrap("ls")
-            .WithStandardOutputPipe(PipeTarget.ToDelegate(Console.WriteLine))
-            .WithStandardErrorPipe(PipeTarget.ToDelegate(Console.WriteLine))
-            .ExecuteAsync();
-
-        await Cli.Wrap($"python3 pip_install_privates --token {pypiToken} requirements.txt")
+        await Cli.Wrap("python3")
             .WithValidation(CommandResultValidation.None)
+            .WithArguments($"pip_install_privates --token {pypiToken} requirements.txt")
             .WithWorkingDirectory(Directory.GetCurrentDirectory())
             .WithStandardOutputPipe(PipeTarget.Null)
             .WithStandardErrorPipe(PipeTarget.Null)
