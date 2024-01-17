@@ -18,7 +18,7 @@ public class PythonRestoreBackgroundService : BackgroundService
     {
         string pypiToken = _options.PyPiToken;
 
-        await Cli.Wrap("PYTHON RESTORE COMMAND")
+        await Cli.Wrap("pip3.9 install -r requirements.txt")
             .WithValidation(CommandResultValidation.None)
             .WithStandardOutputPipe(PipeTarget.Null)
             .WithStandardErrorPipe(PipeTarget.Null)
