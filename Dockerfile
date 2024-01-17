@@ -15,8 +15,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0.5 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-ARG PYPI_TOKEN
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         software-properties-common \
