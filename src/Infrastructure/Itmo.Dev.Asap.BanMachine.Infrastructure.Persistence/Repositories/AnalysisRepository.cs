@@ -202,6 +202,8 @@ internal class AnalysisRepository : IAnalysisRepository
         await using var command = new NpgsqlCommand(sql, connection);
         await using NpgsqlDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
 
+        await reader.ReadAsync(cancellationToken);
+
         return new AnalysisId(reader.GetInt64(0));
     }
 
