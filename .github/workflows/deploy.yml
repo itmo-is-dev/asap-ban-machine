@@ -89,7 +89,7 @@ jobs:
           
       - name: stop container
         run: |
-          docker stop asap-ban-machine || true && docker rm asap-asap-ban-machine || true
+          docker stop asap-ban-machine || true && docker rm asap-ban-machine || true
 
       - name: start container
         run: |
