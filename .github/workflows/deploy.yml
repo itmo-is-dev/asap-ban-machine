@@ -95,7 +95,7 @@ jobs:
         run: |
           docker run \
             --name asap-ban-machine \
-            -p 8070:8070
+            -p 8070:8070 \
             -e ASPNETCORE_ENVIRONMENT=${{ needs.environment-set.outputs.environment-key }} \
             -e Platform__YandexCloud__ServiceUri=${{ secrets.YANDEX_SERVICE_URI }} \
             -e Platform__YandexCloud__LockBox__SecretId=${{ secrets.YANDEX_SECRET_ID }} \
