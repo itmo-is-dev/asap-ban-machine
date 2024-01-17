@@ -82,11 +82,17 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: pull image
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.environment-set.outputs.branch }}
+          
+      - name: stop container
+        run: |
+          docker stop asap-ban-machine || true && docker rm asap-asap-ban-machine || true
 
       - name: start container
         run: |
-          docker stop asap-ban-machine || true && docker rm asap-asap-ban-machine || true
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.environment-set.outputs.branch }}
           docker run \
             --name asap-ban-machine \
             -p 8070:8070
