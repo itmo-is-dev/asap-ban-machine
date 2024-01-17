@@ -48,7 +48,7 @@ public class BanMachineService : IBanMachineService
                 await second.Content.CopyToAsync(file, cancellationToken);
             }
 
-            await Cli.Wrap("python main.py")
+            await Cli.Wrap("python3 main.py")
                 .WithArguments(builder => builder.Add(FirstSubmissionPath).Add(SecondSubmissionPath).Add(ResultsPath))
                 .WithWorkingDirectory(Directory.GetCurrentDirectory())
                 .WithValidation(CommandResultValidation.None)
