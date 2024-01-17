@@ -18,8 +18,8 @@ public class PythonRestoreBackgroundService : BackgroundService
     {
         string pypiToken = _options.PyPiToken;
 
-        await Cli.Wrap("python pip_install_privates --token ${pypiToken} requirements.txt")
-            .}WithValidation(CommandResultValidation.None)
+        await Cli.Wrap($"python pip_install_privates --token {pypiToken} requirements.txt")
+            .WithValidation(CommandResultValidation.None)
             .WithStandardOutputPipe(PipeTarget.Null)
             .WithStandardErrorPipe(PipeTarget.Null)
             .ExecuteAsync(stoppingToken);
