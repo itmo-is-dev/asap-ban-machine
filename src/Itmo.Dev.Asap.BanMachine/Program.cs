@@ -9,6 +9,7 @@ using Itmo.Dev.Asap.BanMachine.Presentation.Kafka.Extensions;
 using Itmo.Dev.Platform.BackgroundTasks.Extensions;
 using Itmo.Dev.Platform.Common.Extensions;
 using Itmo.Dev.Platform.Events;
+using Itmo.Dev.Platform.Locking.Extensions;
 using Itmo.Dev.Platform.Logging.Extensions;
 using Itmo.Dev.Platform.YandexCloud.Extensions;
 using Microsoft.Extensions.Options;
@@ -40,6 +41,7 @@ builder.Services.AddPlatformEvents(b => b
     .AddPresentationKafkaHandlers());
 
 builder.Host.AddPlatformSerilog(builder.Configuration);
+builder.Services.AddPlatformLockingInMemory();
 builder.Services.AddUtcDateTimeProvider();
 
 builder.Services.AddControllers();
