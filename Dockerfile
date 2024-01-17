@@ -15,8 +15,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0.5 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-ARG PYPI_TOKEN
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         software-properties-common \
@@ -31,5 +29,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN ln -s /usr/bin/python3.9 /usr/bin/python3
+
+RUN python -m pip install pip_install_privates
 
 ENTRYPOINT ["dotnet", "Itmo.Dev.Asap.BanMachine.dll"]

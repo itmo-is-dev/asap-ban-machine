@@ -3,6 +3,7 @@ import difflib
 import os
 import statistics
 import json
+import zipfile
 
 def compare_files(file1, file2):
     with open(file1, 'r') as f1, open(file2, 'r') as f2:
@@ -41,7 +42,18 @@ def extract_method_block(lines, start_idx, end_idx):
 
     return {'start': start + 1, 'end': end, 'content': content}
 
+def unzip_directory(dir):
+    for item in os.listdir(dir):
+        if item.endswith('.zip'):
+            file_name = os.path.abspath(item)
+            zip_ref = zipfile.ZipFile(file_name)
+            zip_ref.extractall(dir)
+            zip_ref.close()
+            os.remove(file_name)
+
 def compare_directories(dir1, dir2, similarity_file, suspicious_blocks_file):
+    unzip_directory(dir1)
+    unzip_directory(dir2)
 
     scores = []
     suspicious_blocks = []
@@ -64,6 +76,9 @@ def compare_directories(dir1, dir2, similarity_file, suspicious_blocks_file):
         f.write(mean_score)
     with open(suspicious_blocks_file, 'w') as f:
         json.dump(suspicious_blocks, f, indent=4)
+
+    os.rmdir(dir1)
+    os.rmdir(dir2)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Compare directories for file similarity.')
