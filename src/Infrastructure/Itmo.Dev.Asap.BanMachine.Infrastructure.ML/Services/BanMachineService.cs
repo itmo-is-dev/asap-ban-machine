@@ -6,6 +6,7 @@ using Itmo.Dev.Asap.BanMachine.Application.Models.Submissions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Itmo.Dev.Asap.BanMachine.Infrastructure.ML.Services;
 
@@ -56,6 +57,9 @@ public class BanMachineService : IBanMachineService
                 await second.Content.CopyToAsync(file, cancellationToken);
             }
 
+            var outputBuilder = new StringBuilder();
+            var errorBuilder = new StringBuilder();
+
             await Cli.Wrap("python3")
                 .WithArguments(builder => builder
                     .Add("main.py")
@@ -64,9 +68,23 @@ public class BanMachineService : IBanMachineService
                     .Add(ResultsPath))
                 .WithWorkingDirectory(Directory.GetCurrentDirectory())
                 .WithValidation(CommandResultValidation.None)
-                .WithStandardOutputPipe(PipeTarget.ToDelegate(x => _logger.LogTrace("ML wrote to stout: {Message}", x)))
-                .WithStandardErrorPipe(PipeTarget.ToDelegate(x => _logger.LogError("ML wrote to stderr: {Message}", x)))
+                .WithStandardOutputPipe(PipeTarget.ToStringBuilder(outputBuilder))
+                .WithStandardErrorPipe(PipeTarget.ToStringBuilder(errorBuilder))
                 .ExecuteAsync(cancellationToken);
+
+            if (outputBuilder.Length is not 0)
+            {
+                _logger.LogTrace(
+                    "ML wrote to stdout: {Message}",
+                    outputBuilder.ToString());
+            }
+
+            if (errorBuilder.Length is not 0)
+            {
+                _logger.LogTrace(
+                    "ML wrote to stderr: {Message}",
+                    errorBuilder.ToString());
+            }
 
             double similarityScore = ParseSimilarityScore();
             SimilarCodeBlocks[] codeBlocks = ParseCodeBlocks();
