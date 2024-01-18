@@ -4,6 +4,9 @@ import os
 import statistics
 import json
 import zipfile
+import tempfile
+import shutil
+
 
 def compare_files(file1, file2):
     with open(file1, 'r') as f1, open(file2, 'r') as f2:
@@ -22,12 +25,16 @@ def compare_files(file1, file2):
             method_block1 = extract_method_block(lines1, i1, i2)
             method_block2 = extract_method_block(lines2, j1, j2)
 
-            block1 = {'FilePath': file1, 'LineFrom': method_block1['start'], 'LineTo': method_block1['end'], 'Content': method_block1['content']}
-            block2 = {'FilePath': file2, 'LineFrom': method_block2['start'], 'LineTo': method_block2['end'], 'Content': method_block2['content']}
-            if not any(block['First']['Content'] == method_block1['content'] and block['Second']['Content'] == method_block2['content'] for block in suspicious_blocks):
+            block1 = {'FilePath': file1, 'LineFrom': method_block1['start'], 'LineTo': method_block1['end'],
+                      'Content': method_block1['content']}
+            block2 = {'FilePath': file2, 'LineFrom': method_block2['start'], 'LineTo': method_block2['end'],
+                      'Content': method_block2['content']}
+            if not any(block['First']['Content'] == method_block1['content'] and block['Second']['Content'] ==
+                       method_block2['content'] for block in suspicious_blocks):
                 suspicious_blocks.append({'First': block1, 'Second': block2, 'SimilarityScore': round(ratio, 2)})
 
     return ratio, suspicious_blocks
+
 
 def extract_method_block(lines, start_idx, end_idx):
     start = start_idx
@@ -42,6 +49,7 @@ def extract_method_block(lines, start_idx, end_idx):
 
     return {'start': start + 1, 'end': end, 'content': content}
 
+
 def unzip_directory(dir):
     for item in os.listdir(dir):
         if item.endswith('.zip'):
@@ -50,6 +58,7 @@ def unzip_directory(dir):
             zip_ref.extractall(dir)
             zip_ref.close()
             os.remove(file_name)
+
 
 def compare_directories(dir1, dir2, similarity_file, suspicious_blocks_file):
     unzip_directory(dir1)
@@ -68,7 +77,7 @@ def compare_directories(dir1, dir2, similarity_file, suspicious_blocks_file):
                     similarity, blocks = compare_files(file1, file2)
                     scores.append(similarity)
                     suspicious_blocks.extend(blocks)
-    
+
     mean_score = statistics.mean(scores)
     mean_score = str(round(mean_score, 2))
 
@@ -80,20 +89,34 @@ def compare_directories(dir1, dir2, similarity_file, suspicious_blocks_file):
     os.rmdir(dir1)
     os.rmdir(dir2)
 
+
+def compare_zip_files(zip1, zip2, similarity_file, suspicious_blocks_file):
+    dir1 = tempfile.mkdtemp()
+    dir2 = tempfile.mkdtemp()
+
+    with zipfile.ZipFile(zip1, 'r') as zip_ref:
+        zip_ref.extractall(dir1)
+    with zipfile.ZipFile(zip2, 'r') as zip_ref:
+        zip_ref.extractall(dir2)
+
+    compare_directories(dir1, dir2, similarity_file, suspicious_blocks_file)
+
+    shutil.rmtree(dir1)
+    shutil.rmtree(dir2)
+
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Compare directories for file similarity.')
-    parser.add_argument('dir1', type=str, help='First directory to compare')
-    parser.add_argument('dir2', type=str, help='Second directory to compare')
+    parser = argparse.ArgumentParser(description='Compare zip files for file similarity.')
+    parser.add_argument('zip1', type=str, help='First zip file to compare')
+    parser.add_argument('zip2', type=str, help='Second zip file to compare')
     parser.add_argument('result_dir', type=str, help='Directory to store the results')
-    
+
     args = parser.parse_args()
-    
+
     if not os.path.exists(args.result_dir):
         os.makedirs(args.result_dir)
-    
+
     similarity_file = os.path.join(args.result_dir, 'similarity.txt')
     suspicious_blocks_file = os.path.join(args.result_dir, 'suspicious_blocks.json')
-    
-    compare_directories(args.dir1, args.dir2, similarity_file, suspicious_blocks_file)
 
-#compare_directories('/Users/parandroid/Desktop/plagiarism/quaterhalfbro-master/Lab3/Backups', '/Users/parandroid/Desktop/plagiarism/DaddyDogs-master/Lab3/Backups')
+    compare_zip_files(args.zip1, args.zip2, similarity_file, suspicious_blocks_file)
