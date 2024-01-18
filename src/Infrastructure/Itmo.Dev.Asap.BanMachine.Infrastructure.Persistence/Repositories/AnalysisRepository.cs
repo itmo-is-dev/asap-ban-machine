@@ -4,9 +4,7 @@ using Itmo.Dev.Asap.BanMachine.Application.Models.Analysis;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Submissions;
 using Itmo.Dev.Platform.Postgres.Connection;
 using Itmo.Dev.Platform.Postgres.Extensions;
-using Itmo.Dev.Platform.Postgres.Transactions;
 using Npgsql;
-using System.Data;
 using System.Runtime.CompilerServices;
 
 namespace Itmo.Dev.Asap.BanMachine.Infrastructure.Persistence.Repositories;
@@ -14,14 +12,10 @@ namespace Itmo.Dev.Asap.BanMachine.Infrastructure.Persistence.Repositories;
 internal class AnalysisRepository : IAnalysisRepository
 {
     private readonly IPostgresConnectionProvider _connectionProvider;
-    private readonly IPostgresTransactionProvider _transactionProvider;
 
-    public AnalysisRepository(
-        IPostgresConnectionProvider connectionProvider,
-        IPostgresTransactionProvider transactionProvider)
+    public AnalysisRepository(IPostgresConnectionProvider connectionProvider)
     {
         _connectionProvider = connectionProvider;
-        _transactionProvider = transactionProvider;
     }
 
     public async IAsyncEnumerable<SubmissionDataPair> QueryDataPairsAsync(
@@ -265,9 +259,6 @@ internal class AnalysisRepository : IAnalysisRepository
         from unnest(:fist_code_blocks, :second_code_blocks, :similarity_scores) as s(first_code_blocks, second_code_blocks, similarity_scores);
         """;
 
-        await using NpgsqlTransaction transaction = await _transactionProvider
-            .CreateTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
-
         NpgsqlConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
 
         await using NpgsqlCommand dataCommand = new NpgsqlCommand(dataSql, connection)
@@ -290,7 +281,5 @@ internal class AnalysisRepository : IAnalysisRepository
 
             await codeBlocksCommand.ExecuteNonQueryAsync(cancellationToken);
         }
-
-        await transaction.CommitAsync(cancellationToken);
     }
 }
