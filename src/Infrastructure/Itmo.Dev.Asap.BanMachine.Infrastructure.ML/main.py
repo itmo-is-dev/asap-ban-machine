@@ -45,7 +45,7 @@ def extract_method_block(lines, start_idx, end_idx):
 def unzip_directory(dir):
     for item in os.listdir(dir):
         if item.endswith('.zip'):
-            file_name = os.path.abspath(item)
+            file_name = os.path.join(dir, item)
             zip_ref = zipfile.ZipFile(file_name)
             zip_ref.extractall(dir)
             zip_ref.close()
