@@ -248,8 +248,13 @@ internal class AnalysisRepository : IAnalysisRepository
                                                 analysis_result_code_block_first,
                                                 analysis_result_code_block_second,
                                                 analysis_result_code_block_similarity_score)
-        select :analysis_id, :fist_submission_id, :second_submission_id, * 
-        from unnest(:fist_code_blocks, :second_code_blocks, :similarity_scores);
+        select :analysis_id, 
+               :fist_submission_id,
+               :second_submission_id, 
+               s.first_code_blocks,
+               s.second_code_blocks,
+               s.similarity_scores
+        from unnest(:fist_code_blocks, :second_code_blocks, :similarity_scores) as s(first_code_blocks, second_code_blocks, similarity_scores);
         """;
 
         NpgsqlConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
