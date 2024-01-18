@@ -4,7 +4,9 @@ using Itmo.Dev.Asap.BanMachine.Application.Models.Analysis;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Submissions;
 using Itmo.Dev.Platform.Postgres.Connection;
 using Itmo.Dev.Platform.Postgres.Extensions;
+using Itmo.Dev.Platform.Postgres.Transactions;
 using Npgsql;
+using System.Data;
 using System.Runtime.CompilerServices;
 
 namespace Itmo.Dev.Asap.BanMachine.Infrastructure.Persistence.Repositories;
@@ -12,10 +14,14 @@ namespace Itmo.Dev.Asap.BanMachine.Infrastructure.Persistence.Repositories;
 internal class AnalysisRepository : IAnalysisRepository
 {
     private readonly IPostgresConnectionProvider _connectionProvider;
+    private readonly IPostgresTransactionProvider _transactionProvider;
 
-    public AnalysisRepository(IPostgresConnectionProvider connectionProvider)
+    public AnalysisRepository(
+        IPostgresConnectionProvider connectionProvider,
+        IPostgresTransactionProvider transactionProvider)
     {
         _connectionProvider = connectionProvider;
+        _transactionProvider = transactionProvider;
     }
 
     public async IAsyncEnumerable<SubmissionDataPair> QueryDataPairsAsync(
@@ -237,11 +243,13 @@ internal class AnalysisRepository : IAnalysisRepository
         SubmissionPairAnalysisResult result,
         CancellationToken cancellationToken)
     {
-        const string sql = """
+        const string dataSql = """
         insert into analysis_result_data
         (analysis_id, analysis_result_data_first_submission_id, analysis_result_data_second_submission_id, analysis_result_data_similarity_score)
         values (:analysis_id, :fist_submission_id, :second_submission_id, :similarity_score);
+        """;
 
+        const string codeBlocksSql = """
         insert into analysis_result_code_blocks(analysis_id,
                                                 analysis_result_code_block_first_submission_id,
                                                 analysis_result_code_block_second_submission_id,
@@ -257,17 +265,32 @@ internal class AnalysisRepository : IAnalysisRepository
         from unnest(:fist_code_blocks, :second_code_blocks, :similarity_scores) as s(first_code_blocks, second_code_blocks, similarity_scores);
         """;
 
+        await using NpgsqlTransaction transaction = await _transactionProvider
+            .CreateTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+
         NpgsqlConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
 
-        await using NpgsqlCommand command = new NpgsqlCommand(sql, connection)
+        await using NpgsqlCommand dataCommand = new NpgsqlCommand(dataSql, connection)
             .AddParameter("analysis_id", analysisId.Value)
             .AddParameter("fist_submission_id", result.Data.FirstSubmissionId)
             .AddParameter("second_submission_id", result.Data.SecondSubmissionId)
-            .AddParameter("similarity_score", result.Data.SimilarityScore)
-            .AddParameter("fist_code_blocks", result.SimilarCodeBlocks.Select(x => x.First).ToArray())
-            .AddParameter("second_code_blocks", result.SimilarCodeBlocks.Select(x => x.Second).ToArray())
-            .AddParameter("similarity_scores", result.SimilarCodeBlocks.Select(x => x.SimilarityScore).ToArray());
+            .AddParameter("similarity_score", result.Data.SimilarityScore);
 
-        await command.ExecuteNonQueryAsync(cancellationToken);
+        await dataCommand.ExecuteNonQueryAsync(cancellationToken);
+
+        if (result.SimilarCodeBlocks is not [])
+        {
+            await using NpgsqlCommand codeBlocksCommand = new NpgsqlCommand(codeBlocksSql, connection)
+                .AddParameter("analysis_id", analysisId.Value)
+                .AddParameter("fist_submission_id", result.Data.FirstSubmissionId)
+                .AddParameter("second_submission_id", result.Data.SecondSubmissionId)
+                .AddParameter("fist_code_blocks", result.SimilarCodeBlocks.Select(x => x.First).ToArray())
+                .AddParameter("second_code_blocks", result.SimilarCodeBlocks.Select(x => x.Second).ToArray())
+                .AddParameter("similarity_scores", result.SimilarCodeBlocks.Select(x => x.SimilarityScore).ToArray());
+
+            await codeBlocksCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        await transaction.CommitAsync(cancellationToken);
     }
 }
