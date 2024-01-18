@@ -129,7 +129,8 @@ internal class AnalysisRepository : IAnalysisRepository
             .AddParameter("should_ignore_fist_filter", query.FirstSubmissionId is null)
             .AddParameter("should_ignore_second_filter", query.SecondSubmissionId is null)
             .AddParameter("fist_submission_id", query.FirstSubmissionId ?? Guid.Empty)
-            .AddParameter("second_submission_id", query.SecondSubmissionId ?? Guid.Empty);
+            .AddParameter("second_submission_id", query.SecondSubmissionId ?? Guid.Empty)
+            .AddParameter("page_size", query.PageSize);
 
         await using NpgsqlDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
 
@@ -240,7 +241,9 @@ internal class AnalysisRepository : IAnalysisRepository
         const string dataSql = """
         insert into analysis_result_data
         (analysis_id, analysis_result_data_first_submission_id, analysis_result_data_second_submission_id, analysis_result_data_similarity_score)
-        values (:analysis_id, :fist_submission_id, :second_submission_id, :similarity_score);
+        values (:analysis_id, :fist_submission_id, :second_submission_id, :similarity_score)
+        on conflict on constraint analysis_result_data_pkey do update 
+            set analysis_result_data_similarity_score = excluded.analysis_result_data_similarity_score;
         """;
 
         const string codeBlocksSql = """
