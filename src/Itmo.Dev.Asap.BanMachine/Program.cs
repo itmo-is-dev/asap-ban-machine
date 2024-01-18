@@ -43,6 +43,7 @@ builder.Services.AddPlatformEvents(b => b
 builder.Host.AddPlatformSerilog(builder.Configuration);
 builder.Services.AddPlatformLockingInMemory();
 builder.Services.AddUtcDateTimeProvider();
+builder.AddPlatformSentry();
 
 builder.Services.AddControllers();
 
@@ -54,6 +55,8 @@ await using (AsyncServiceScope scope = app.Services.CreateAsyncScope())
 }
 
 app.UseRouting();
+app.UsePlatformSentryTracing(app.Configuration);
+
 app.UsePresentationGrpc();
 
 await app.RunAsync();

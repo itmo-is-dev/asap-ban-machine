@@ -3,6 +3,7 @@ using Itmo.Dev.Asap.BanMachine.Application.Abstractions.BanMachine;
 using Itmo.Dev.Asap.BanMachine.Application.Abstractions.BanMachine.Models;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Analysis;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Submissions;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
 
@@ -15,11 +16,18 @@ public class BanMachineService : IBanMachineService
     private static readonly string SecondSubmissionPath;
     private static readonly string ResultsPath;
 
+    private readonly ILogger<BanMachineService> _logger;
+
     static BanMachineService()
     {
         FirstSubmissionPath = Path.Combine(WorkingDirectory, "first.zip");
         SecondSubmissionPath = Path.Combine(WorkingDirectory, "second.zip");
         ResultsPath = Path.Combine(WorkingDirectory, "results");
+    }
+
+    public BanMachineService(ILogger<BanMachineService> logger)
+    {
+        _logger = logger;
     }
 
     public async IAsyncEnumerable<SubmissionPairAnalysisResult> AnalyseAsync(
@@ -56,8 +64,8 @@ public class BanMachineService : IBanMachineService
                     .Add(ResultsPath))
                 .WithWorkingDirectory(Directory.GetCurrentDirectory())
                 .WithValidation(CommandResultValidation.None)
-                .WithStandardOutputPipe(PipeTarget.Null)
-                .WithStandardErrorPipe(PipeTarget.Null)
+                .WithStandardOutputPipe(PipeTarget.ToDelegate(x => _logger.LogTrace("ML wrote to stout: {Message}", x)))
+                .WithStandardErrorPipe(PipeTarget.ToDelegate(x => _logger.LogError("ML wrote to stderr: {Message}", x)))
                 .ExecuteAsync(cancellationToken);
 
             double similarityScore = ParseSimilarityScore();
