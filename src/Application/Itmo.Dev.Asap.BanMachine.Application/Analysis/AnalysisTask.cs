@@ -11,6 +11,7 @@ using Itmo.Dev.Platform.BackgroundTasks.Tasks.Errors;
 using Itmo.Dev.Platform.BackgroundTasks.Tasks.Results;
 using Itmo.Dev.Platform.Events;
 using Itmo.Dev.Platform.Postgres.Transactions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using System.Data;
@@ -26,6 +27,7 @@ public class AnalysisTask :
     private readonly ISubmissionContentLoader _submissionContentLoader;
     private readonly IPostgresTransactionProvider _transactionProvider;
     private readonly IEventPublisher _eventPublisher;
+    private readonly ILogger<AnalysisTask> _logger;
 
     public AnalysisTask(
         IBanMachineService banMachineService,
@@ -33,13 +35,15 @@ public class AnalysisTask :
         IOptions<AnalysisTaskOptions> options,
         ISubmissionContentLoader submissionContentLoader,
         IPostgresTransactionProvider transactionProvider,
-        IEventPublisher eventPublisher)
+        IEventPublisher eventPublisher,
+        ILogger<AnalysisTask> logger)
     {
         _banMachineService = banMachineService;
         _analysisRepository = analysisRepository;
         _submissionContentLoader = submissionContentLoader;
         _transactionProvider = transactionProvider;
         _eventPublisher = eventPublisher;
+        _logger = logger;
         _options = options.Value;
     }
 
@@ -75,6 +79,13 @@ public class AnalysisTask :
 
             await foreach (SubmissionPairAnalysisResult result in results)
             {
+                _logger.LogTrace(
+                    "Saving analysis result, first = {FirstSubmissionId}, second = {SecondSubmissionId}, similarity = {Similarity}, code blocks count = {CodeBlocksCount}",
+                    result.Data.FirstSubmissionId,
+                    result.Data.SecondSubmissionId,
+                    result.Data.SimilarityScore,
+                    result.SimilarCodeBlocks.Count);
+
                 await _analysisRepository.AddAnalysisResultAsync(
                     executionContext.Metadata.AnalysisId,
                     result,
