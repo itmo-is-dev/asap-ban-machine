@@ -78,8 +78,11 @@ def compare_directories(dir1, dir2, similarity_file, suspicious_blocks_file):
                     scores.append(similarity)
                     suspicious_blocks.extend(blocks)
 
-    mean_score = statistics.mean(scores)
-    mean_score = str(round(mean_score, 2))
+    if scores:  
+        mean_score = statistics.mean(scores)
+        mean_score = str(round(mean_score, 2))
+    else:
+        mean_score = '0'  
 
     with open(similarity_file, 'w') as f:
         f.write(mean_score)
