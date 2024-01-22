@@ -18,15 +18,29 @@ public class PythonRestoreBackgroundService : IHostedService
     {
         _logger.LogTrace("Starting python restore");
 
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        cts.CancelAfter(TimeSpan.FromSeconds(600));
+        using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
+        {
+            cts.CancelAfter(TimeSpan.FromSeconds(60));
 
-        Command requirementsCommand = Cli.Wrap("pip")
-            .WithArguments("install /packages/asap-ban-machine-model.whl")
-            .WithValidation(CommandResultValidation.None)
-            .WithWorkingDirectory(Directory.GetCurrentDirectory());
+            Command command = Cli.Wrap("pip")
+                .WithArguments("install /packages/asap-ban-machine-model.whl")
+                .WithValidation(CommandResultValidation.None)
+                .WithWorkingDirectory(Directory.GetCurrentDirectory());
 
-        await ExecuteLoggedAsync(requirementsCommand, cts.Token);
+            await ExecuteLoggedAsync(command, cts.Token);
+        }
+
+        using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
+        {
+            cts.CancelAfter(TimeSpan.FromSeconds(600));
+
+            Command command = Cli.Wrap("pip")
+                .WithArguments("install -r requirements.txt")
+                .WithValidation(CommandResultValidation.None)
+                .WithWorkingDirectory(Directory.GetCurrentDirectory());
+
+            await ExecuteLoggedAsync(command, cts.Token);
+        }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
