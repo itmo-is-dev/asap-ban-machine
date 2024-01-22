@@ -29,13 +29,16 @@ public class PythonRestoreBackgroundService : BackgroundService
         var outputBuilder = new StringBuilder();
         var errorBuilder = new StringBuilder();
 
-        await Cli.Wrap("pip_install_privates")
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+        cts.CancelAfter(TimeSpan.FromSeconds(60));
+
+        await Cli.Wrap("pip")
             .WithValidation(CommandResultValidation.None)
-            .WithArguments($"--token {pypiToken} requirements.txt")
+            .WithArguments("install -r requirements.txt")
             .WithWorkingDirectory(Directory.GetCurrentDirectory())
             .WithStandardOutputPipe(PipeTarget.ToStringBuilder(outputBuilder))
             .WithStandardErrorPipe(PipeTarget.ToStringBuilder(errorBuilder))
-            .ExecuteAsync(stoppingToken);
+            .ExecuteAsync(cts.Token);
 
         if (outputBuilder.Length is not 0)
         {
