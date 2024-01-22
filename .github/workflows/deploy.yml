@@ -101,8 +101,8 @@ jobs:
             -e Platform__YandexCloud__LockBox__SecretId=${{ secrets.YANDEX_SECRET_ID }} \
             -d \
             -t \
-            -v "$PIP_CACHE_DIR":/root/.cache/pip \
-            -v "$HUGGING_FACE_CACHE_DIR":/root/.cache/hugging-face \
+            -v /home/asap-admin/pip-cache:/root/.cache/pip \
+            -v /home/asap-admin/hugging-face-cache:/root/.cache/hugging-face \
             -v /var/log/Serilogs/asap-ban-machine:/app/Serilogs/asap-ban-machine \
             --restart=unless-stopped \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.environment-set.outputs.branch }}
