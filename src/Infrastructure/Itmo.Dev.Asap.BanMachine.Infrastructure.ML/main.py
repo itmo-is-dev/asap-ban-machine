@@ -6,34 +6,29 @@ import json
 import zipfile
 import tempfile
 import shutil
+import asap-ban-machine-model
 
 
 def compare_files(file1, file2):
-    with open(file1, 'r') as f1, open(file2, 'r') as f2:
-        text1 = f1.read()
-        text2 = f2.read()
+    detector = CodePlagiarismDetector()
 
-    lines1 = text1.splitlines()
-    lines2 = text2.splitlines()
+    code1 = detector.load_code_from_directory(file1)
+    code2 = detector.load_code_from_directory(file2)
 
-    seq = difflib.SequenceMatcher(None, lines1, lines2)
-    ratio = seq.ratio()
+    embedding1 = detector.generate_code_embeddings(code1)
+    embedding2 = detector.generate_code_embeddings(code2)
+
+    similarity = detector.calculate_similarity(embedding1, embedding2)
 
     suspicious_blocks = []
-    for tag, i1, i2, j1, j2 in seq.get_opcodes():
-        if tag in ('replace', 'delete', 'insert'):
-            method_block1 = extract_method_block(lines1, i1, i2)
-            method_block2 = extract_method_block(lines2, j1, j2)
+    if similarity < 0.5:  
+        suspicious_blocks.append({
+            'First': {'FilePath': file1, 'Content': code1},
+            'Second': {'FilePath': file2, 'Content': code2},
+            'SimilarityScore': similarity
+        })
 
-            block1 = {'FilePath': file1, 'LineFrom': method_block1['start'], 'LineTo': method_block1['end'],
-                      'Content': method_block1['content']}
-            block2 = {'FilePath': file2, 'LineFrom': method_block2['start'], 'LineTo': method_block2['end'],
-                      'Content': method_block2['content']}
-            if not any(block['First']['Content'] == method_block1['content'] and block['Second']['Content'] ==
-                       method_block2['content'] for block in suspicious_blocks):
-                suspicious_blocks.append({'First': block1, 'Second': block2, 'SimilarityScore': round(ratio, 2)})
-
-    return ratio, suspicious_blocks
+    return similarity, suspicious_blocks
 
 
 def extract_method_block(lines, start_idx, end_idx):
