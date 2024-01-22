@@ -88,7 +88,8 @@ jobs:
 
           aws s3 cp \
             --endpoint-url=https://storage.yandexcloud.net \
-            --recursive \
+            --recursive 
+            -- region '' \
             s3://${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_BUCKET }} \
             bucket
 
