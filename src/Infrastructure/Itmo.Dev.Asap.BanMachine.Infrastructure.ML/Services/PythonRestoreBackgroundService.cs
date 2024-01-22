@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Itmo.Dev.Asap.BanMachine.Infrastructure.ML.Services;
 
-public class PythonRestoreBackgroundService : BackgroundService
+public class PythonRestoreBackgroundService : IHostedService
 {
     private readonly ILogger<PythonRestoreBackgroundService> _logger;
 
@@ -14,25 +14,36 @@ public class PythonRestoreBackgroundService : BackgroundService
         _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogTrace("Starting python restore");
 
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
-        cts.CancelAfter(TimeSpan.FromSeconds(120));
+        using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
+        {
+            cts.CancelAfter(TimeSpan.FromSeconds(60));
 
-        Command packageCommand = Cli.Wrap("pip")
-            .WithArguments("install /packages/asap-ban-machine-model.whl")
-            .WithValidation(CommandResultValidation.None)
-            .WithWorkingDirectory(Directory.GetCurrentDirectory());
+            Command packageCommand = Cli.Wrap("pip")
+                .WithArguments("install /packages/asap-ban-machine-model.whl")
+                .WithValidation(CommandResultValidation.None)
+                .WithWorkingDirectory(Directory.GetCurrentDirectory());
 
-        Command requirementsCommand = Cli.Wrap("pip")
-            .WithArguments("install -r requirements.txt")
-            .WithValidation(CommandResultValidation.None)
-            .WithWorkingDirectory(Directory.GetCurrentDirectory());
+            await ExecuteLoggedAsync(packageCommand, cts.Token);
+        }
 
-        await ExecuteLoggedAsync(packageCommand, cts.Token);
-        await ExecuteLoggedAsync(requirementsCommand, cts.Token);
+        using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
+        {
+            Command requirementsCommand = Cli.Wrap("pip")
+                .WithArguments("install -r requirements.txt")
+                .WithValidation(CommandResultValidation.None)
+                .WithWorkingDirectory(Directory.GetCurrentDirectory());
+
+            await ExecuteLoggedAsync(requirementsCommand, cts.Token);
+        }
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
     }
 
     private async Task ExecuteLoggedAsync(Command command, CancellationToken cancellationToken)
