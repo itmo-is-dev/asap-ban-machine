@@ -22,6 +22,8 @@ public class PythonRestoreBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogTrace("Starting python restore");
+
         string pypiToken = _options.PyPiToken;
 
         var outputBuilder = new StringBuilder();
