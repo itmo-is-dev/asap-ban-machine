@@ -6,7 +6,7 @@ import json
 import zipfile
 import tempfile
 import shutil
-import asap-ban-machine-model
+from asap-ban-machine-model import CodePlagiarismDetector
 
 
 def compare_files(file1, file2):
