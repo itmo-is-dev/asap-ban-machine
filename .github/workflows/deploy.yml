@@ -76,11 +76,6 @@ jobs:
     runs-on: [ self-hosted, Linux, X64, "${{ needs.environment-set.outputs.runner-label }}" ]
     environment: ${{ needs.environment-set.outputs.environment-key }}
     steps:
-      - name: install AWS CLI
-        uses: unfor19/install-aws-cli-action@v1
-        with:
-          arch: amd64
-          
       - name: configure AWS
         run: |
           export AWS_ACCESS_KEY_ID=${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_KEY_ID }}
