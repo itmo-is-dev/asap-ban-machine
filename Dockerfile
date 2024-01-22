@@ -21,6 +21,6 @@ RUN apt-get update \
   && ln -s /usr/bin/python3 python \
   && pip3 install --upgrade pip 
 
-RUN pip intsall requirements.txt
+RUN pip install requirements.txt
 
 ENTRYPOINT ["dotnet", "Itmo.Dev.Asap.BanMachine.dll"]
