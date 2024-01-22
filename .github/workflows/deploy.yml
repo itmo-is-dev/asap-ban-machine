@@ -80,18 +80,10 @@ jobs:
         run: |
           export AWS_ACCESS_KEY_ID=${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_KEY }}
-          
+
       - name: download .whl file
         run: |
-          rm -rf bucket
-          mkdir bucket
-
-          aws s3 cp \
-            --endpoint-url=https://storage.yandexcloud.net \
-            --recursive \
-            -- region '' \
-            s3://${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_BUCKET }} \
-            bucket
+          aws s3api get-object --bucket ${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_BUCKET }} --key asap-ban-machine-model.whl --endpoint-url=https://storage.yandexcloud.net asap-ban-machine-model.whl
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -99,11 +91,11 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: pull image
         run: |
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.environment-set.outputs.branch }}
-          
+
       - name: stop container
         run: |
           docker stop asap-ban-machine || true && docker rm asap-ban-machine || true
@@ -120,7 +112,7 @@ jobs:
             -t \
             -v /home/asap-admin/pip-cache:/root/.cache/pip \
             -v /home/asap-admin/hugging-face-cache:/root/.cache/hugging-face \
-            -v bucket:/packages
+            -v asap-ban-machine-model.whl:/packages/asap-ban-machine-model.whl
             -v 
             -v /var/log/Serilogs/asap-ban-machine:/app/Serilogs/asap-ban-machine \
             --restart=unless-stopped \
