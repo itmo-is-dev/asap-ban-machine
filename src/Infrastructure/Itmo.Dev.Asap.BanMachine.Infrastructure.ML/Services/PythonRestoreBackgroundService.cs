@@ -21,8 +21,8 @@ public class PythonRestoreBackgroundService : IHostedService
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         cts.CancelAfter(TimeSpan.FromSeconds(600));
 
-        Command requirementsCommand = Cli.Wrap("/bin/bash")
-            .WithArguments("./restore.bash")
+        Command requirementsCommand = Cli.Wrap("pip")
+            .WithArguments("install /packages/asap-ban-machine-model.whl")
             .WithValidation(CommandResultValidation.None)
             .WithWorkingDirectory(Directory.GetCurrentDirectory());
 
