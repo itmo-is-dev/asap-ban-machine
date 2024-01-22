@@ -41,6 +41,8 @@ public class PythonRestoreBackgroundService : IHostedService
 
             await ExecuteLoggedAsync(command, cts.Token);
         }
+
+        _logger.LogTrace("Finished python restore");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
