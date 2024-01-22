@@ -27,9 +27,9 @@ public class PythonRestoreBackgroundService : BackgroundService
         var outputBuilder = new StringBuilder();
         var errorBuilder = new StringBuilder();
 
-        await Cli.Wrap("python3")
+        await Cli.Wrap("pip_install_privates")
             .WithValidation(CommandResultValidation.None)
-            .WithArguments($"pip_install_privates --token {pypiToken} requirements.txt")
+            .WithArguments($"--token {pypiToken} requirements.txt")
             .WithWorkingDirectory(Directory.GetCurrentDirectory())
             .WithStandardOutputPipe(PipeTarget.ToStringBuilder(outputBuilder))
             .WithStandardErrorPipe(PipeTarget.ToStringBuilder(errorBuilder))
