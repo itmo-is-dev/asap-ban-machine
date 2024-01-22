@@ -21,7 +21,8 @@ public class PythonRestoreBackgroundService : IHostedService
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         cts.CancelAfter(TimeSpan.FromSeconds(600));
 
-        Command requirementsCommand = Cli.Wrap("./restore.bash")
+        Command requirementsCommand = Cli.Wrap("/bin/bash")
+            .WithArguments("./restore.bash")
             .WithValidation(CommandResultValidation.None)
             .WithWorkingDirectory(Directory.GetCurrentDirectory());
 
