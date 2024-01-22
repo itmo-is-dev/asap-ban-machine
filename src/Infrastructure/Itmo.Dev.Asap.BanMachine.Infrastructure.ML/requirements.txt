@@ -4,4 +4,4 @@ pandas==1.4.3
 numpy==1.23.1
 scikit-learn==1.1.1
 tqdm==4.64.0
-asap-ban-machine-model
+asap-ban-machine-model==0.0.33
