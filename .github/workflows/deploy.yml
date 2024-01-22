@@ -76,6 +76,27 @@ jobs:
     runs-on: [ self-hosted, Linux, X64, "${{ needs.environment-set.outputs.runner-label }}" ]
     environment: ${{ needs.environment-set.outputs.environment-key }}
     steps:
+      - name: install AWS CLI
+        uses: unfor19/install-aws-cli-action@v1
+        with:
+          arch: amd64
+          
+      - name: configure AWS
+        run: |
+          export AWS_ACCESS_KEY_ID=${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_KEY }}
+          
+      - name: download .whl file
+        run: |
+          rm -rf bucket
+          mkdir bucket
+
+          aws s3 cp \
+            --endpoint-url=https://storage.yandexcloud.net \
+            --recursive \
+            s3://${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_BUCKET }} \
+            bucket
+
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -103,6 +124,8 @@ jobs:
             -t \
             -v /home/asap-admin/pip-cache:/root/.cache/pip \
             -v /home/asap-admin/hugging-face-cache:/root/.cache/hugging-face \
+            -v bucket:/packages
+            -v 
             -v /var/log/Serilogs/asap-ban-machine:/app/Serilogs/asap-ban-machine \
             --restart=unless-stopped \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.environment-set.outputs.branch }}

@@ -1,44 +1,49 @@
 using CliWrap;
-using Itmo.Dev.Asap.BanMachine.Infrastructure.ML.Options;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace Itmo.Dev.Asap.BanMachine.Infrastructure.ML.Services;
 
 public class PythonRestoreBackgroundService : BackgroundService
 {
-    private readonly MachineLearningOptions _options;
     private readonly ILogger<PythonRestoreBackgroundService> _logger;
 
-    public PythonRestoreBackgroundService(
-        IOptions<MachineLearningOptions> options,
-        ILogger<PythonRestoreBackgroundService> logger)
+    public PythonRestoreBackgroundService(ILogger<PythonRestoreBackgroundService> logger)
     {
         _logger = logger;
-        _options = options.Value;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogTrace("Starting python restore");
 
-        string pypiToken = _options.PyPiToken;
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+        cts.CancelAfter(TimeSpan.FromSeconds(120));
 
+        Command packageCommand = Cli.Wrap("pip")
+            .WithArguments("install /packages/asap-ban-machine-model.whl")
+            .WithValidation(CommandResultValidation.None)
+            .WithWorkingDirectory(Directory.GetCurrentDirectory());
+
+        Command requirementsCommand = Cli.Wrap("pip")
+            .WithArguments("install -r requirements.txt")
+            .WithValidation(CommandResultValidation.None)
+            .WithWorkingDirectory(Directory.GetCurrentDirectory());
+
+        await ExecuteLoggedAsync(packageCommand, cts.Token);
+        await ExecuteLoggedAsync(requirementsCommand, cts.Token);
+    }
+
+    private async Task ExecuteLoggedAsync(Command command, CancellationToken cancellationToken)
+    {
         var outputBuilder = new StringBuilder();
         var errorBuilder = new StringBuilder();
 
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
-        cts.CancelAfter(TimeSpan.FromSeconds(60));
-
-        await Cli.Wrap("pip")
-            .WithValidation(CommandResultValidation.None)
-            .WithArguments("install -r requirements.txt")
-            .WithWorkingDirectory(Directory.GetCurrentDirectory())
+        await command
             .WithStandardOutputPipe(PipeTarget.ToStringBuilder(outputBuilder))
             .WithStandardErrorPipe(PipeTarget.ToStringBuilder(errorBuilder))
-            .ExecuteAsync(cts.Token);
+            .ExecuteAsync(cancellationToken);
 
         if (outputBuilder.Length is not 0)
         {
