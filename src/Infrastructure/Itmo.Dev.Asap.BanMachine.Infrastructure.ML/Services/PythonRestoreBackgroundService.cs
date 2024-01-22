@@ -22,8 +22,8 @@ public class PythonRestoreBackgroundService : IHostedService
         {
             cts.CancelAfter(TimeSpan.FromSeconds(60));
 
-            Command packageCommand = Cli.Wrap("/bin/bash")
-                .WithArguments("sudo pip install /packages/asap-ban-machine-model.whl")
+            Command packageCommand = Cli.Wrap("sudo")
+                .WithArguments("pip install /packages/asap-ban-machine-model.whl")
                 .WithValidation(CommandResultValidation.None)
                 .WithWorkingDirectory(Directory.GetCurrentDirectory());
 
@@ -34,8 +34,8 @@ public class PythonRestoreBackgroundService : IHostedService
         {
             cts.CancelAfter(TimeSpan.FromSeconds(600));
 
-            Command requirementsCommand = Cli.Wrap("/bin/bash")
-                .WithArguments("sudo pip install -r requirements.txt")
+            Command requirementsCommand = Cli.Wrap("sudo")
+                .WithArguments("pip install -r requirements.txt")
                 .WithValidation(CommandResultValidation.None)
                 .WithWorkingDirectory(Directory.GetCurrentDirectory());
 
