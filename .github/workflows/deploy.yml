@@ -112,7 +112,7 @@ jobs:
             -t \
             -v /home/asap-admin/pip-cache:/root/.cache/pip \
             -v /home/asap-admin/hugging-face-cache:/root/.cache/hugging-face \
-            -v asap-ban-machine-model.whl:/packages/asap-ban-machine-model.whl
+            -v asap-ban-machine-model.whl:/packages/asap-ban-machine-model.whl \
             -v 
             -v /var/log/Serilogs/asap-ban-machine:/app/Serilogs/asap-ban-machine \
             --restart=unless-stopped \
