@@ -22,7 +22,7 @@ public class PythonRestoreBackgroundService : IHostedService
         {
             cts.CancelAfter(TimeSpan.FromSeconds(60));
 
-            Command packageCommand = Cli.Wrap("pip")
+            Command packageCommand = Cli.Wrap("sudo pip")
                 .WithArguments("install /packages/asap-ban-machine-model.whl")
                 .WithValidation(CommandResultValidation.None)
                 .WithWorkingDirectory(Directory.GetCurrentDirectory());
@@ -32,7 +32,9 @@ public class PythonRestoreBackgroundService : IHostedService
 
         using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
         {
-            Command requirementsCommand = Cli.Wrap("pip")
+            cts.CancelAfter(TimeSpan.FromSeconds(600));
+
+            Command requirementsCommand = Cli.Wrap("sudo pip")
                 .WithArguments("install -r requirements.txt")
                 .WithValidation(CommandResultValidation.None)
                 .WithWorkingDirectory(Directory.GetCurrentDirectory());
@@ -52,8 +54,12 @@ public class PythonRestoreBackgroundService : IHostedService
         var errorBuilder = new StringBuilder();
 
         await command
-            .WithStandardOutputPipe(PipeTarget.ToStringBuilder(outputBuilder))
-            .WithStandardErrorPipe(PipeTarget.ToStringBuilder(errorBuilder))
+            .WithStandardOutputPipe(PipeTarget.Merge(
+                PipeTarget.ToStringBuilder(outputBuilder),
+                PipeTarget.ToDelegate(Console.WriteLine)))
+            .WithStandardErrorPipe(PipeTarget.Merge(
+                PipeTarget.ToStringBuilder(errorBuilder),
+                PipeTarget.ToDelegate(Console.WriteLine)))
             .ExecuteAsync(cancellationToken);
 
         if (outputBuilder.Length is not 0)
