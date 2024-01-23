@@ -115,7 +115,7 @@ jobs:
             -e Platform__YandexCloud__LockBox__SecretId=${{ secrets.YANDEX_SECRET_ID }} \
             -d \
             -t \
-            -v pip-cache:/root/.cache/pip:rw \
+            -v conda-cache:/opt/conda/pkgs:rw \
             -v hugging-face-cache:/root/.cache/hugging-face:rw \
             -v asap-ban-machine-model.whl:/packages/asap-ban-machine-model.whl \
             -v /var/log/Serilogs/asap-ban-machine:/app/Serilogs/asap-ban-machine \
