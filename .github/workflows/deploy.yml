@@ -6,8 +6,10 @@ on:
       - master
       - develop
     paths:
-      - '!docker/base-image/**'
-      - '!.github/workflows/build-base-image.yml'
+      - 'src/**'
+      - '*.props'
+      - 'Dockerfile'
+      - '.github/workflows/deploy.yml'
 
   workflow_dispatch:
 
