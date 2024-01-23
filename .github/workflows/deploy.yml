@@ -8,6 +8,7 @@ on:
     paths:
       - '!docker/base-image/*'
       - '!.github/workflows/build-base-image.yml'
+      - '*'
 
   workflow_dispatch:
 
