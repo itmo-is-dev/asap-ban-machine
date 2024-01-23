@@ -44,6 +44,6 @@ jobs:
         with:
           context: ./docker/base-image
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ghcr.io/itmo-is-dev/asap-ban-machine-aspnet-conda:latest
           labels: ${{ steps.meta.outputs.labels }}
           no-cache: true
