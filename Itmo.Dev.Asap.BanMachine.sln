@@ -48,9 +48,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\purge-allure-history.yml = .github\workflows\purge-allure-history.yml
 		.github\workflows\dotnet-build.yml = .github\workflows\dotnet-build.yml
 		.github\workflows\deploy.yml = .github\workflows\deploy.yml
+		.github\workflows\build-base-image.yml = .github\workflows\build-base-image.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Itmo.Dev.Asap.BanMachine.Infrastructure.ContentLoader", "src\Infrastructure\Itmo.Dev.Asap.BanMachine.Infrastructure.ContentLoader\Itmo.Dev.Asap.BanMachine.Infrastructure.ContentLoader.csproj", "{861D78F0-10BE-4B01-828E-A11380151713}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "base-image", "base-image", "{64E396EA-506C-42BC-988F-6AE248371BA2}"
+	ProjectSection(SolutionItems) = preProject
+		docker\base-image\Dockerfile = docker\base-image\Dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +79,7 @@ Global
 		{1B79D666-69BF-4F69-AA71-8C43870BF8D0} = {8DBC045A-F04D-416A-959E-94703B3D5448}
 		{D394A62B-8270-408A-BB1D-D87652F9E361} = {0E3ACC7E-64FB-4F09-8910-679131BA65D5}
 		{861D78F0-10BE-4B01-828E-A11380151713} = {B0B0B802-EE45-4A3F-935E-CE979F42B8B8}
+		{64E396EA-506C-42BC-988F-6AE248371BA2} = {FDB3B0CA-F25E-4BB0-A47E-E364F8CD7CFD}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{733BA0AE-6DD8-43C3-B64A-DCA8AC396AD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
