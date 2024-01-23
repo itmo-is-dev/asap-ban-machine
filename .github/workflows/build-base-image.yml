@@ -31,9 +31,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: move to base-images folder
+      - name: move to base-image folder
         run: |
-          cd docker/base-images
+          cd docker/base-image
           
       - name: Extract metadata (tags, labels) for Docker
         id: meta
