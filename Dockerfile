@@ -11,9 +11,9 @@ FROM build AS publish
 WORKDIR "/source/src/Itmo.Dev.Asap.BanMachine"
 RUN dotnet publish "Itmo.Dev.Asap.BanMachine.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
 
+ARG FINAL_IMAGE
 
-FROM ghcr.io/itmo-is-dev/asap-ban-machine-aspnet-conda:$ENVIRONMENT AS final
-ARG ENVIRONMENT
+FROM $FINAL_IMAGE AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
