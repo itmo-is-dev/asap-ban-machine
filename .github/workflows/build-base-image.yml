@@ -8,7 +8,7 @@ on:
         
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: asap-ban-machine-aspnet-conda
+  IMAGE_NAME: ${{ github.repository }}-aspnet-conda
   
 jobs: 
   docker-build-and-upload:
@@ -31,10 +31,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: move to base-image folder
-        run: |
-          cd docker/base-image
-          
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
@@ -47,4 +43,5 @@ jobs:
           context: ./docker/base-image
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           no-cache: true
