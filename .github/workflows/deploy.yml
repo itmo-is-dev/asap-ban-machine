@@ -73,8 +73,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            FINAL_IMAGE=ghcr.io/itmo-is-dev/asap-ban-machine-aspnet-conda:${{ needs.environment-set.outputs.branch }}
           no-cache: true
 
   deploy:
