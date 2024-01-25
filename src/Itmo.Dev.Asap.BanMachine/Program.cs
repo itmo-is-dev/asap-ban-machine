@@ -60,4 +60,3 @@ app.UsePlatformSentryTracing(app.Configuration);
 app.UsePresentationGrpc();
 
 await app.RunAsync();
-#pragma warning restore CA1506
