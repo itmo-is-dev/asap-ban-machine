@@ -18,6 +18,9 @@
     <ItemGroup>
         <None Update="main.py" CopyToOutputDirectory="PreserveNewest"/>
         <None Update="requirements.txt" CopyToOutputDirectory="PreserveNewest"/>
+        <None Update="restore.sh">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

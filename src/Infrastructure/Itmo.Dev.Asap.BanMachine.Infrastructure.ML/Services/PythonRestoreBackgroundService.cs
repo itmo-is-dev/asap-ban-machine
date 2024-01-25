@@ -23,7 +23,7 @@ public class PythonRestoreBackgroundService : IHostedService
             cts.CancelAfter(TimeSpan.FromSeconds(600));
 
             Command command = Cli.Wrap("/bin/bash")
-                .WithArguments("restore.sh")
+                .WithArguments("./restore.sh")
                 .WithValidation(CommandResultValidation.None)
                 .WithWorkingDirectory(Directory.GetCurrentDirectory());
 
