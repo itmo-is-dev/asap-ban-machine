@@ -1,15 +1,13 @@
 #!/bin/bash
 
 ENV_NAME="asap-ban-machine"
-
+conda init
 conda env list | awk '{print $1}' | grep -w $ENV_NAME
 if [ $? -eq 0 ]; then
     echo "Environment $ENV_NAME exists, activating it"
-    conda init
     conda activate $ENV_NAME
 else
     echo "Environment $ENV_NAME does not exist, creating it"
-    conda init
     conda create -n $ENV_NAME
     conda activate $ENV_NAME
 fi
