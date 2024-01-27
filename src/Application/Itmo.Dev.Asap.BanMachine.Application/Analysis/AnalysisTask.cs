@@ -18,8 +18,13 @@ using System.Data;
 
 namespace Itmo.Dev.Asap.BanMachine.Application.Analysis;
 
-public class AnalysisTask :
-    IBackgroundTask<AnalysisTaskMetadata, AnalysisTaskExecutionMetadata, EmptyExecutionResult, EmptyError>
+#pragma warning disable CA1506
+
+public class AnalysisTask : IBackgroundTask<
+    AnalysisTaskMetadata,
+    AnalysisTaskExecutionMetadata,
+    EmptyExecutionResult,
+    EmptyError>
 {
     private readonly IBanMachineService _banMachineService;
     private readonly IAnalysisRepository _analysisRepository;
@@ -107,7 +112,7 @@ public class AnalysisTask :
         var evt = new AnalysisCompletedEvent(executionContext.Metadata.AnalysisId);
         await _eventPublisher.PublishAsync(evt, default);
 
-        return new BackgroundTaskExecutionResult<EmptyExecutionResult, EmptyError>.Success(EmptyExecutionResult.Value);
+        return BackgroundTaskExecutionResult.Success.WithEmptyResult().ForEmptyError();
     }
 
     private async ValueTask<BanMachineAnalysisRequest> Map(
