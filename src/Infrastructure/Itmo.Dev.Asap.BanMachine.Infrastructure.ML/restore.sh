@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ENV_NAME="asap-ban-machine"
+
 conda init
 conda env list | awk '{print $1}' | grep -w $ENV_NAME
 if [ $? -eq 0 ]; then
