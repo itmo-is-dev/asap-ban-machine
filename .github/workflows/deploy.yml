@@ -120,6 +120,7 @@ jobs:
             -t \
             -v conda-cache:/opt/conda/pkgs:rw \
             -v hugging-face-cache:/root/.cache/hugging-face:rw \
+            -v pip-cache:/root/.cache/pip:rw \
             -v ./packages:/packages \
             -v /var/log/Serilogs/asap-ban-machine:/app/Serilogs/asap-ban-machine \
             --restart=unless-stopped \
