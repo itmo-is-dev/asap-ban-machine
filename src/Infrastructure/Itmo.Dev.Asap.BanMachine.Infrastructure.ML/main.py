@@ -99,8 +99,8 @@ def compare_zip_files(zip1, zip2, similarity_file, suspicious_blocks_file):
 
     compare_directories(dir1, dir2, similarity_file, suspicious_blocks_file)
 
-    shutil.rmtree(dir1)
-    shutil.rmtree(dir2)
+    # shutil.rmtree(dir1)
+    # shutil.rmtree(dir2)
 
 
 if __name__ == "__main__":
