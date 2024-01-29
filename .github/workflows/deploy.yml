@@ -91,7 +91,7 @@ jobs:
           rm -rf packages
           mkdir packages
 
-          aws s3api get-object --bucket ${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_BUCKET }} --key asap-ban-machine-model.whl --endpoint-url=https://storage.yandexcloud.net ./packages/asap-ban-machine-model.whl
+          aws s3api get-object --bucket ${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_BUCKET }} --key asap_ban_machine_model-0.0.1-py3-none-any.whl --endpoint-url=https://storage.yandexcloud.net ./packages/asap_ban_machine_model-0.0.1-py3-none-any.whl
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2

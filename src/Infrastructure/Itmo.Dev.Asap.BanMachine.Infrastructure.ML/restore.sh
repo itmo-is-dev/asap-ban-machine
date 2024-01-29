@@ -14,6 +14,6 @@ else
     conda activate $ENV_NAME
 fi
 
-pip install /packages/asap-ban-machine-model.whl
+pip install /packages/asap_ban_machine_model-0.0.1-py3-none-any.whl
 
 #while read requirement; do conda install --yes $requirement; done < requirements.txt

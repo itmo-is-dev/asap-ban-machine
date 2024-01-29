@@ -15,4 +15,6 @@ FROM ghcr.io/itmo-is-dev/asap-ban-machine-aspnet-conda:latest AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
+SHELL ["/bin/bash", "-c"]
+
 ENTRYPOINT ["dotnet", "Itmo.Dev.Asap.BanMachine.dll"]
