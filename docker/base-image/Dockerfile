@@ -8,4 +8,7 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 
 ENV PATH="/opt/conda/bin:${PATH}"
 
+SHELL ["/bin/bash", "-c"]
+
 RUN conda update --all
+RUN conda init bash
