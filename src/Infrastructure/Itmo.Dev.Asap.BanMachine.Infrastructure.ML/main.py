@@ -84,8 +84,8 @@ def compare_directories(dir1, dir2, similarity_file, suspicious_blocks_file):
     with open(suspicious_blocks_file, 'w') as f:
         json.dump(suspicious_blocks, f, indent=4)
 
-    os.rmdir(dir1)
-    os.rmdir(dir2)
+    shutil.rmtree(dir1)
+    shutil.rmtree(dir2)
 
 
 def compare_zip_files(zip1, zip2, similarity_file, suspicious_blocks_file):
