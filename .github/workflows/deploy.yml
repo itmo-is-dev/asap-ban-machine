@@ -118,7 +118,7 @@ jobs:
             -e Platform__YandexCloud__LockBox__SecretId=${{ secrets.YANDEX_SECRET_ID }} \
             -d \
             -t \
-            -v conda-cache:/opt/conda/pkgs:rw \
+            -v conda-cache:/opt/conda:rw \
             -v hugging-face-cache:/root/.cache/hugging-face:rw \
             -v pip-cache:/root/.cache/pip:rw \
             -v ./packages:/packages \
