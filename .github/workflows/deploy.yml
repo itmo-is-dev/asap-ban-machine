@@ -88,7 +88,7 @@ jobs:
 
       - name: download .whl file
         run: |
-          aws s3api get-object --bucket ${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_BUCKET }} --key asap-ban-machine-model.whl --endpoint-url=https://storage.yandexcloud.net asap-ban-machine-model.whl
+          aws s3api get-object --bucket ${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_BUCKET }} --key asap-ban-machine-model.whl --endpoint-url=https://storage.yandexcloud.net ./packages/asap-ban-machine-model.whl
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -117,7 +117,7 @@ jobs:
             -t \
             -v conda-cache:/opt/conda/pkgs:rw \
             -v hugging-face-cache:/root/.cache/hugging-face:rw \
-            -v asap-ban-machine-model.whl:/packages/asap-ban-machine-model.whl \
+            -v ./packages:/packages \
             -v /var/log/Serilogs/asap-ban-machine:/app/Serilogs/asap-ban-machine \
             --restart=unless-stopped \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.environment-set.outputs.branch }}
