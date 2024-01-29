@@ -88,6 +88,9 @@ jobs:
 
       - name: download .whl file
         run: |
+          rm -rf packages
+          mkdir packages
+
           aws s3api get-object --bucket ${{ secrets.YC_OBJECT_STORAGE_BAN_MACHINE_BUCKET }} --key asap-ban-machine-model.whl --endpoint-url=https://storage.yandexcloud.net ./packages/asap-ban-machine-model.whl
 
       - name: Login to Docker Hub
