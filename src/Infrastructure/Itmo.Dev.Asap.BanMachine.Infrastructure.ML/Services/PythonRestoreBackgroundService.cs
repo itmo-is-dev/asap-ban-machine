@@ -18,17 +18,12 @@ public class PythonRestoreBackgroundService : IHostedService
     {
         _logger.LogTrace("Starting python restore");
 
-        using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
-        {
-            cts.CancelAfter(TimeSpan.FromSeconds(600));
+        Command command = Cli.Wrap("/bin/bash")
+            .WithArguments("./restore.sh")
+            .WithValidation(CommandResultValidation.None)
+            .WithWorkingDirectory(Directory.GetCurrentDirectory());
 
-            Command command = Cli.Wrap("/bin/bash")
-                .WithArguments("./restore.sh")
-                .WithValidation(CommandResultValidation.None)
-                .WithWorkingDirectory(Directory.GetCurrentDirectory());
-
-            await ExecuteLoggedAsync(command, cts.Token);
-        }
+        await ExecuteLoggedAsync(command, cancellationToken);
 
         _logger.LogTrace("Finished python restore");
     }
