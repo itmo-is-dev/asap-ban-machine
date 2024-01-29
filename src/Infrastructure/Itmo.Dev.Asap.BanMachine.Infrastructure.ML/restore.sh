@@ -1,7 +1,5 @@
 #!/bin/bash --login
 
-conda init bash
-
 ENV_NAME="asap-ban-machine"
 
 conda env list | awk '{print $1}' | grep -w $ENV_NAME
