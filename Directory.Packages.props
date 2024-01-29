@@ -4,21 +4,26 @@
     <EnablePackageVersionOverride>false</EnablePackageVersionOverride>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="AWSSDK.S3" Version="3.7.305.11" />
+    <PackageVersion Include="CliWrap" Version="3.6.6" />
     <PackageVersion Include="Grpc.AspNetCore" Version="2.59.0" />
     <PackageVersion Include="Grpc.AspNetCore.Server.Reflection" Version="2.59.0" />
     <PackageVersion Include="Grpc.Tools" Version="2.60.0" />
-    <PackageVersion Include="Itmo.Dev.Platform.BackgroundTasks" Version="1.1.81" />
-    <PackageVersion Include="Itmo.Dev.Platform.Events" Version="1.0.81" />
-    <PackageVersion Include="Itmo.Dev.Platform.Kafka" Version="1.1.81" />
-    <PackageVersion Include="Itmo.Dev.Platform.Locking" Version="1.0.81" />
-    <PackageVersion Include="Itmo.Dev.Platform.Logging" Version="1.0.81" />
-    <PackageVersion Include="Itmo.Dev.Platform.Postgres" Version="1.1.81" />
-    <PackageVersion Include="Itmo.Dev.Platform.YandexCloud" Version="1.0.81" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageVersion Include="Itmo.Dev.Editorconfig" Version="1.0.2" />
+    <PackageVersion Include="Itmo.Dev.Platform.BackgroundTasks" Version="1.1.83" />
+    <PackageVersion Include="Itmo.Dev.Platform.Events" Version="1.0.83" />
+    <PackageVersion Include="Itmo.Dev.Platform.Kafka" Version="1.1.83" />
+    <PackageVersion Include="Itmo.Dev.Platform.Locking" Version="1.0.83" />
+    <PackageVersion Include="Itmo.Dev.Platform.Logging" Version="1.0.83" />
+    <PackageVersion Include="Itmo.Dev.Platform.Postgres" Version="1.1.83" />
+    <PackageVersion Include="Itmo.Dev.Platform.YandexCloud" Version="1.0.83" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="7.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="7.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="Octokit" Version="9.1.0" />
     <PackageVersion Include="SourceKit.Generators.Builder" Version="1.1.24" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.435" />
     <PackageVersion Include="System.Linq.Async" Version="6.0.1" />

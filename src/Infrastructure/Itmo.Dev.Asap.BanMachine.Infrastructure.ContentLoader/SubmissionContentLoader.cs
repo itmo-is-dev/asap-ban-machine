@@ -18,6 +18,7 @@ public class SubmissionContentLoader : ISubmissionContentLoader
         var ms = new MemoryStream();
 
         await response.CopyToAsync(ms, cancellationToken);
+        ms.Position = 0;
 
         return new SubmissionContent(data.SubmissionId, ms);
     }

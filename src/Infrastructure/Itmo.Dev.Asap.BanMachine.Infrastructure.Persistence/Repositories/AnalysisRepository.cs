@@ -129,7 +129,8 @@ internal class AnalysisRepository : IAnalysisRepository
             .AddParameter("should_ignore_fist_filter", query.FirstSubmissionId is null)
             .AddParameter("should_ignore_second_filter", query.SecondSubmissionId is null)
             .AddParameter("fist_submission_id", query.FirstSubmissionId ?? Guid.Empty)
-            .AddParameter("second_submission_id", query.SecondSubmissionId ?? Guid.Empty);
+            .AddParameter("second_submission_id", query.SecondSubmissionId ?? Guid.Empty)
+            .AddParameter("page_size", query.PageSize);
 
         await using NpgsqlDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
 
@@ -202,6 +203,8 @@ internal class AnalysisRepository : IAnalysisRepository
         await using var command = new NpgsqlCommand(sql, connection);
         await using NpgsqlDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
 
+        await reader.ReadAsync(cancellationToken);
+
         return new AnalysisId(reader.GetInt64(0));
     }
 
@@ -215,7 +218,7 @@ internal class AnalysisRepository : IAnalysisRepository
         (analysis_id, analysis_data_submission_id, analysis_data_user_id, analysis_data_assignment_id, analysis_data_file_link)
         select :analysis_id, * 
         from unnest(:submission_ids, :user_ids, :assignment_ids, :file_links)
-        on conflict do update set analysis_data_file_link = excluded.analysis_data_file_link;
+        on conflict on constraint analysis_data_pkey do update set analysis_data_file_link = excluded.analysis_data_file_link;
         """;
 
         NpgsqlConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
@@ -235,32 +238,51 @@ internal class AnalysisRepository : IAnalysisRepository
         SubmissionPairAnalysisResult result,
         CancellationToken cancellationToken)
     {
-        const string sql = """
+        const string dataSql = """
         insert into analysis_result_data
         (analysis_id, analysis_result_data_first_submission_id, analysis_result_data_second_submission_id, analysis_result_data_similarity_score)
-        values (:analysis_id, :fist_submission_id, :second_submission_id, :similarity_score);
+        values (:analysis_id, :fist_submission_id, :second_submission_id, :similarity_score)
+        on conflict on constraint analysis_result_data_pkey do update 
+            set analysis_result_data_similarity_score = excluded.analysis_result_data_similarity_score;
+        """;
 
+        const string codeBlocksSql = """
         insert into analysis_result_code_blocks(analysis_id,
                                                 analysis_result_code_block_first_submission_id,
                                                 analysis_result_code_block_second_submission_id,
                                                 analysis_result_code_block_first,
                                                 analysis_result_code_block_second,
                                                 analysis_result_code_block_similarity_score)
-        select :analysis_id, :fist_submission_id, :second_submission_id, * 
-        from unnest(:fist_code_blocks, :second_code_blocks, :similarity_scores);
+        select :analysis_id, 
+               :fist_submission_id,
+               :second_submission_id, 
+               s.first_code_blocks::code_block,
+               s.second_code_blocks::code_block,
+               s.similarity_scores
+        from unnest(:fist_code_blocks, :second_code_blocks, :similarity_scores) as s(first_code_blocks, second_code_blocks, similarity_scores);
         """;
 
         NpgsqlConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
 
-        await using NpgsqlCommand command = new NpgsqlCommand(sql, connection)
+        await using NpgsqlCommand dataCommand = new NpgsqlCommand(dataSql, connection)
             .AddParameter("analysis_id", analysisId.Value)
             .AddParameter("fist_submission_id", result.Data.FirstSubmissionId)
             .AddParameter("second_submission_id", result.Data.SecondSubmissionId)
-            .AddParameter("similarity_score", result.Data.SimilarityScore)
-            .AddParameter("fist_code_blocks", result.SimilarCodeBlocks.Select(x => x.First).ToArray())
-            .AddParameter("second_code_blocks", result.SimilarCodeBlocks.Select(x => x.Second).ToArray())
-            .AddParameter("similarity_scores", result.SimilarCodeBlocks.Select(x => x.SimilarityScore).ToArray());
+            .AddParameter("similarity_score", result.Data.SimilarityScore);
 
-        await command.ExecuteNonQueryAsync(cancellationToken);
+        await dataCommand.ExecuteNonQueryAsync(cancellationToken);
+
+        if (result.SimilarCodeBlocks is not [])
+        {
+            await using NpgsqlCommand codeBlocksCommand = new NpgsqlCommand(codeBlocksSql, connection)
+                .AddParameter("analysis_id", analysisId.Value)
+                .AddParameter("fist_submission_id", result.Data.FirstSubmissionId)
+                .AddParameter("second_submission_id", result.Data.SecondSubmissionId)
+                .AddParameter("fist_code_blocks", result.SimilarCodeBlocks.Select(x => x.First).ToArray())
+                .AddParameter("second_code_blocks", result.SimilarCodeBlocks.Select(x => x.Second).ToArray())
+                .AddParameter("similarity_scores", result.SimilarCodeBlocks.Select(x => x.SimilarityScore).ToArray());
+
+            await codeBlocksCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
     }
 }
