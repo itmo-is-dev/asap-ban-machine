@@ -50,6 +50,9 @@ if __name__ == "__main__":
     scores = compare_zip_files(args.zip1, args.zip2)
     mean_score = sum(scores) / len(scores) if scores else 0
 
+    if not os.path.exists(args.result_dir):
+        os.makedirs(args.result_dir)
+
     score_file = os.path.join(args.result_dir, 'similarity.txt')
     blocks_file = os.path.join(args.result_dir, 'suspicious_blocks.json')
 
