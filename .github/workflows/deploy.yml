@@ -119,7 +119,7 @@ jobs:
             -d \
             -t \
             -v conda-cache:/opt/conda:rw \
-            -v hugging-face-cache:/root/.cache/hugging-face:rw \
+            -v hugging-face-cache:/root/.cache/huggingface:rw \
             -v pip-cache:/root/.cache/pip:rw \
             -v ./packages:/packages \
             -v /var/log/Serilogs/asap-ban-machine:/app/Serilogs/asap-ban-machine \
