@@ -11,14 +11,23 @@ detector = CodePlagiarismDetector()
 
 def compare_directories(dir1, dir2):
     print(f"Comparing directories: {dir1} and {dir2}")
+
     scores = []
+
     files1 = [os.path.join(root, file) for root, dirs, files in os.walk(dir1) for file in files if file.endswith('.cs')]
     files2 = [os.path.join(root, file) for root, dirs, files in os.walk(dir2) for file in files if file.endswith('.cs')]
+
+    total_file_count = len(files1) * len(files2)
+    counter = 1
+
     for file1 in files1:
         for file2 in files2:
-            print(f"Comparing .cs files: {file1} and {file2}")
+            print(f"\n[{counter}/{total_file_count})] -- Comparing .cs files: \nfirst: {file1} \nsecond: {file2}")
             similarity = detector.compare_files(file1, file2)
             scores.append(similarity)
+
+            counter += 1
+
     return scores
 
 
@@ -48,7 +57,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     scores = compare_zip_files(args.zip1, args.zip2)
-    mean_score = sum(scores) / len(scores) if scores else 0
+    mean_score = round(sum(scores) / len(scores), 2) if scores else 0
 
     if not os.path.exists(args.result_dir):
         os.makedirs(args.result_dir)
