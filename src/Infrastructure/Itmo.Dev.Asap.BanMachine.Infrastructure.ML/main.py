@@ -43,13 +43,22 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Compare zip files for file similarity.')
     parser.add_argument('zip1', type=str, help='First zip file to compare')
     parser.add_argument('zip2', type=str, help='Second zip file to compare')
-    parser.add_argument('result_file', type=str, help='File to store the results')
+    parser.add_argument('result_dir', type=str, help='File to store the results')
 
     args = parser.parse_args()
 
     scores = compare_zip_files(args.zip1, args.zip2)
     mean_score = sum(scores) / len(scores) if scores else 0
+    
+    score_file = os.path.join(result_dir, 'similarity.txt')
+    blocks_file = os.path.join(result_dir, 'suspicious_blocks.json')
 
-    print(f"Writing mean score to result file: {args.result_file}")
-    with open(args.result_file, 'w') as f:
+    print(f"Writing mean score to file: {score_file}")
+
+    with open(score_file, 'w') as f:
         f.write(str(mean_score))
+        
+    print(f"Writing block to file: {blocks_file}")
+    
+    with open(blocks_file, 'w') as f:
+        f.write('[]')
