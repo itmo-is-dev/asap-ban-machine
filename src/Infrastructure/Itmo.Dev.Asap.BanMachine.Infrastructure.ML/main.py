@@ -49,16 +49,16 @@ if __name__ == "__main__":
 
     scores = compare_zip_files(args.zip1, args.zip2)
     mean_score = sum(scores) / len(scores) if scores else 0
-    
-    score_file = os.path.join(result_dir, 'similarity.txt')
-    blocks_file = os.path.join(result_dir, 'suspicious_blocks.json')
+
+    score_file = os.path.join(args.result_dir, 'similarity.txt')
+    blocks_file = os.path.join(args.result_dir, 'suspicious_blocks.json')
 
     print(f"Writing mean score to file: {score_file}")
 
     with open(score_file, 'w') as f:
         f.write(str(mean_score))
-        
+
     print(f"Writing block to file: {blocks_file}")
-    
+
     with open(blocks_file, 'w') as f:
         f.write('[]')
