@@ -4,6 +4,7 @@ import json
 import zipfile
 import tempfile
 import shutil
+import torch
 from asap_ban_machine_model.detector import (CodePlagiarismDetector)
 
 detector = CodePlagiarismDetector()
@@ -53,8 +54,11 @@ if __name__ == "__main__":
     parser.add_argument('zip1', type=str, help='First zip file to compare')
     parser.add_argument('zip2', type=str, help='Second zip file to compare')
     parser.add_argument('result_dir', type=str, help='File to store the results')
+    parser.add_argument('num_cores', type=int, help='Physical core count')
 
     args = parser.parse_args()
+
+    torch.set_num_threads(args.num_cores)
 
     scores = compare_zip_files(args.zip1, args.zip2)
     mean_score = round(sum(scores) / len(scores), 2) if scores else 0

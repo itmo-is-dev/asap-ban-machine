@@ -62,7 +62,8 @@ public class BanMachineService : IBanMachineService
                     .Add("main.py")
                     .Add(FirstSubmissionPath)
                     .Add(SecondSubmissionPath)
-                    .Add(ResultsPath))
+                    .Add(ResultsPath)
+                    .Add(Environment.ProcessorCount))
                 .WithWorkingDirectory(Directory.GetCurrentDirectory())
                 .WithValidation(CommandResultValidation.None)
                 .ExecuteLoggedAsync(_logger, cancellationToken);
