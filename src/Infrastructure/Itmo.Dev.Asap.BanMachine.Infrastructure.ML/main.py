@@ -18,16 +18,32 @@ def compare_directories(dir1, dir2):
     files1 = [os.path.join(root, file) for root, dirs, files in os.walk(dir1) for file in files if file.endswith('.cs')]
     files2 = [os.path.join(root, file) for root, dirs, files in os.walk(dir2) for file in files if file.endswith('.cs')]
 
-    total_file_count = len(files1) * len(files2)
+    total_pair_count = len(files1) * len(files2)
     counter = 1
 
+    excluded2 = set()
+
     for file1 in files1:
+        inner_counter = 0
+
         for file2 in files2:
-            print(f"\n[{counter}/{total_file_count})] -- Comparing .cs files: \nfirst: {file1} \nsecond: {file2}")
+            inner_counter += 1
+
+            if file2 in excluded2:
+                total_pair_count -= 1
+                continue
+
+            print(f"\n[{counter}/{total_pair_count})] -- Comparing .cs files: \nfirst: {file1} \nsecond: {file2}")
             similarity = detector.compare_files(file1, file2)
             scores.append(similarity)
 
             counter += 1
+
+            if similarity >= 0.9:
+                print(f"Found similarity = {similarity}, excluding pair from further analysis")
+                excluded2.add(file2)
+                total_pair_count -= len(files2) - inner_counter
+                break
 
     return scores
 
