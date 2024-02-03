@@ -38,13 +38,13 @@ def compare_directories(detector, dir1, dir2):
             similarity, ast1, ast2, _, _ = detector.compare_files(file1, file2)
             scores.append(similarity)
 
-            if similarity >= 0.2:
-                suspicious_blocks.extend(detector.get_suspicious_blocks(ast1, ast2, similarity))
+            #if similarity >= 0.2:
+            suspicious_blocks.extend(detector.get_suspicious_blocks(ast1, ast2, similarity))
 
-                print(f"Found similarity = {similarity}, excluding pair from further analysis")
-                excluded2.add(file2)
-                total_pair_count -= len(files2) - inner_counter
-                break
+            print(f"Found similarity = {similarity}, excluding pair from further analysis")
+            excluded2.add(file2)
+            total_pair_count -= len(files2) - inner_counter
+            break
 
             counter += 1
 
