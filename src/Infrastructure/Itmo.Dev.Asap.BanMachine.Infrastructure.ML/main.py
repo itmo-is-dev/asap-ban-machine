@@ -38,15 +38,17 @@ def compare_directories(dir1, dir2):
             similarity, file1, file2 = detector.compare_files(file1, file2)
             scores.append(similarity)
 
+            suspicious_blocks.append({
+                'file1': file1,
+                'file2': file2,
+                'similarity': similarity
+            })
+
             if similarity >= 0.9:
                 print(f"Found similarity = {similarity}, excluding pair from further analysis")
                 excluded2.add(file2)
                 total_pair_count -= len(files2) - inner_counter
-                suspicious_blocks.append({
-                    'file1': file1,
-                    'file2': file2,
-                    'similarity': similarity
-                })
+
                 break
 
             counter += 1
@@ -66,6 +68,8 @@ def compare_zip_files(zip1, zip2):
         zip_ref.extractall(dir2)
 
     scores, suspicious_blocks = compare_directories(dir1, dir2)
+    mean_score = round(sum(scores) / len(scores), 2) if scores else 0
+
     shutil.rmtree(dir1)
     shutil.rmtree(dir2)
 
@@ -99,21 +103,4 @@ if __name__ == "__main__":
 
     torch.set_num_threads(args.num_cores)
 
-    scores = compare_zip_files(args.zip1, args.zip2)
-    mean_score = round(sum(scores) / len(scores), 2) if scores else 0
-
-    if not os.path.exists(args.result_dir):
-        os.makedirs(args.result_dir)
-
-    score_file = os.path.join(args.result_dir, 'similarity.txt')
-    blocks_file = os.path.join(args.result_dir, 'suspicious_blocks.json')
-
-    print(f"Writing mean score to file: {score_file}")
-
-    with open(score_file, 'w') as f:
-        f.write(str(mean_score))
-
-    print(f"Writing block to file: {blocks_file}")
-
-    with open(blocks_file, 'w') as f:
-        f.write('[]')
+    compare_zip_files(args.zip1, args.zip2)
