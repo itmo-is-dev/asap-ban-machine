@@ -98,4 +98,4 @@ if __name__ == "__main__":
 
     torch.set_num_threads(args.num_cores)
 
-    compare_zip_files(args.zip1, args.zip2)
+    compare_zip_files(detector, args.zip1, args.zip2, args.result_dir)
