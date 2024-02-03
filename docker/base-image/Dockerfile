@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:7.0.5 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 
 RUN apt-get update && apt-get install -y wget bzip2 && apt-get install -y build-essential 
 
