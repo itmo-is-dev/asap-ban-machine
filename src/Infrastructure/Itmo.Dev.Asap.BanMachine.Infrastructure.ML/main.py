@@ -10,7 +10,7 @@ from asap_ban_machine_model.detector import (CodePlagiarismDetector)
 detector = CodePlagiarismDetector()
 
 
-def compare_directories(detector, dir1, dir2):
+def compare_directories(dir1, dir2):
     print(f"Comparing directories: {dir1} and {dir2}")
 
     scores = []
