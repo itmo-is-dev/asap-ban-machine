@@ -48,7 +48,7 @@ def compare_directories(dir1, dir2):
 
             counter += 1
 
-    return scores, suspicious_blocks
+    return scores, all_suspicious_blocks
 
 
 def compare_zip_files(zip1, zip2):
