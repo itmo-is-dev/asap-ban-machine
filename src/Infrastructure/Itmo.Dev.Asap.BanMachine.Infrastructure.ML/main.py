@@ -56,6 +56,11 @@ def compare_zip_files(zip1, zip2):
     dir1 = tempfile.mkdtemp()
     dir2 = tempfile.mkdtemp()
 
+    if os.path.exists(args.result_dir):
+        shutil.rmtree(args.result_dir)
+
+    os.makedirs(args.result_dir)
+
     print(f"Extracting zip files to directories: {dir1} and {dir2}")
     with zipfile.ZipFile(zip1, 'r') as zip_ref:
         zip_ref.extractall(dir1)
@@ -67,9 +72,6 @@ def compare_zip_files(zip1, zip2):
 
     shutil.rmtree(dir1)
     shutil.rmtree(dir2)
-
-    if not os.path.exists(args.result_dir):
-        os.makedirs(args.result_dir)
 
     score_file = os.path.join(args.result_dir, 'similarity.txt')
     blocks_file = os.path.join(args.result_dir, 'suspicious_blocks.json')
@@ -98,4 +100,4 @@ if __name__ == "__main__":
 
     torch.set_num_threads(args.num_cores)
 
-    compare_zip_files(detector, args.zip1, args.zip2, args.result_dir)
+    compare_zip_files(args.zip1, args.zip2)
