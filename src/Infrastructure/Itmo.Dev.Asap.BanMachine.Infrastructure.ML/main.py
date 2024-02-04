@@ -14,7 +14,7 @@ def compare_directories(detector, dir1, dir2):
     print(f"Comparing directories: {dir1} and {dir2}")
 
     scores = []
-    suspicious_blocks = []
+    all_suspicious_blocks = []
 
     files1 = [os.path.join(root, file) for root, dirs, files in os.walk(dir1) for file in files if file.endswith('.cs')]
     files2 = [os.path.join(root, file) for root, dirs, files in os.walk(dir2) for file in files if file.endswith('.cs')]
@@ -35,23 +35,23 @@ def compare_directories(detector, dir1, dir2):
                 continue
 
             print(f"\n[{counter}/{total_pair_count})] -- Comparing .cs files: \nfirst: {file1} \nsecond: {file2}")
-            similarity, ast1, ast2, _, _ = detector.compare_files(file1, file2)
+            similarity, suspicious_blocks, file1, file2 = detector.compare_files(file1, file2)
             scores.append(similarity)
 
-            #if similarity >= 0.2:
-            suspicious_blocks.extend(detector.get_suspicious_blocks(ast1, ast2, similarity))
+            all_suspicious_blocks.extend(suspicious_blocks)
 
-            print(f"Found similarity = {similarity}, excluding pair from further analysis")
-            excluded2.add(file2)
-            total_pair_count -= len(files2) - inner_counter
-            break
+            if similarity >= 0.9:
+                print(f"Found similarity = {similarity}, excluding pair from further analysis")
+                excluded2.add(file2)
+                total_pair_count -= len(files2) - inner_counter
+                break
 
             counter += 1
 
     return scores, suspicious_blocks
 
 
-def compare_zip_files(detector, zip1, zip2, result_dir):
+def compare_zip_files(zip1, zip2):
     print(f"Comparing zip files: {zip1} and {zip2}")
     dir1 = tempfile.mkdtemp()
     dir2 = tempfile.mkdtemp()
@@ -62,24 +62,24 @@ def compare_zip_files(detector, zip1, zip2, result_dir):
     with zipfile.ZipFile(zip2, 'r') as zip_ref:
         zip_ref.extractall(dir2)
 
-    scores, suspicious_blocks = compare_directories(detector, dir1, dir2)
+    scores, suspicious_blocks = compare_directories(dir1, dir2)
     mean_score = round(sum(scores) / len(scores), 2) if scores else 0
 
     shutil.rmtree(dir1)
     shutil.rmtree(dir2)
 
-    if not os.path.exists(result_dir):
-        os.makedirs(result_dir)
+    if not os.path.exists(args.result_dir):
+        os.makedirs(args.result_dir)
 
-    score_file = os.path.join(result_dir, 'similarity.txt')
-    blocks_file = os.path.join(result_dir, 'suspicious_blocks.json')
+    score_file = os.path.join(args.result_dir, 'similarity.txt')
+    blocks_file = os.path.join(args.result_dir, 'suspicious_blocks.json')
 
     print(f"Writing mean score to file: {score_file}")
 
     with open(score_file, 'w') as f:
         f.write(str(mean_score))
 
-    print(f"Writing suspicious blocks to file: {blocks_file}")
+    print(f"Writing block to file: {blocks_file}")
 
     with open(blocks_file, 'w') as f:
         json.dump(suspicious_blocks, f)
