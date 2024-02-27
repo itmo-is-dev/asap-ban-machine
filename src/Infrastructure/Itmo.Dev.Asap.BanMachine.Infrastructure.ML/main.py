@@ -5,6 +5,7 @@ import zipfile
 import tempfile
 import shutil
 import torch
+import numpy as np
 from asap_ban_machine_model.detector import (CodePlagiarismDetector)
 
 detector = CodePlagiarismDetector()
