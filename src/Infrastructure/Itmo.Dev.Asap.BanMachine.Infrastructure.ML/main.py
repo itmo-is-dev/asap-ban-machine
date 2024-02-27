@@ -39,6 +39,7 @@ def compare_directories(dir1, dir2):
             scores.append(similarity)
 
             all_suspicious_blocks.extend(suspicious_blocks)
+            counter += 1
 
             if similarity >= 0.9:
                 print(f"Found similarity = {similarity}, excluding pair from further analysis")
@@ -46,9 +47,18 @@ def compare_directories(dir1, dir2):
                 total_pair_count -= len(files2) - inner_counter
                 break
 
-            counter += 1
-
     return scores, all_suspicious_blocks
+
+
+def calculate_weighted_mean(scores):
+    scores_array = np.array(scores)
+    print(scores)
+
+    weights = scores
+
+    weighted_mean = np.average(scores_array, weights=weights)
+
+    return weighted_mean
 
 
 def compare_zip_files(zip1, zip2):
@@ -68,7 +78,9 @@ def compare_zip_files(zip1, zip2):
         zip_ref.extractall(dir2)
 
     scores, suspicious_blocks = compare_directories(dir1, dir2)
-    mean_score = round(sum(scores) / len(scores), 2) if scores else 0
+
+    # mean_score = statistics.mean(scores) if scores else 0
+    mean_score = calculate_weighted_mean(scores)
 
     shutil.rmtree(dir1)
     shutil.rmtree(dir2)
@@ -87,7 +99,6 @@ def compare_zip_files(zip1, zip2):
         json.dump(suspicious_blocks, f)
 
     return scores
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Compare zip files for file similarity.')
