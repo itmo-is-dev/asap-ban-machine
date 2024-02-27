@@ -57,6 +57,9 @@ def calculate_weighted_mean(scores):
 
     weights = scores
 
+    if sum(scores_array) == 0:
+        return 0
+
     weighted_mean = np.average(scores_array, weights=weights)
 
     return weighted_mean
