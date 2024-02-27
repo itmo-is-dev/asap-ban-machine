@@ -4,6 +4,7 @@ using Itmo.Dev.Asap.BanMachine.Application.Models.Analysis;
 using Itmo.Dev.Asap.BanMachine.Application.Models.Submissions;
 using Itmo.Dev.Platform.Postgres.Connection;
 using Itmo.Dev.Platform.Postgres.Extensions;
+using Newtonsoft.Json;
 using Npgsql;
 using System.Runtime.CompilerServices;
 
@@ -12,10 +13,12 @@ namespace Itmo.Dev.Asap.BanMachine.Infrastructure.Persistence.Repositories;
 internal class AnalysisRepository : IAnalysisRepository
 {
     private readonly IPostgresConnectionProvider _connectionProvider;
+    private readonly JsonSerializerSettings _serializerSettings;
 
-    public AnalysisRepository(IPostgresConnectionProvider connectionProvider)
+    public AnalysisRepository(IPostgresConnectionProvider connectionProvider, JsonSerializerSettings serializerSettings)
     {
         _connectionProvider = connectionProvider;
+        _serializerSettings = serializerSettings;
     }
 
     public async IAsyncEnumerable<SubmissionDataPair> QueryDataPairsAsync(
@@ -185,8 +188,8 @@ internal class AnalysisRepository : IAnalysisRepository
         while (await reader.ReadAsync(cancellationToken))
         {
             yield return new SimilarCodeBlocks(
-                First: reader.GetFieldValue<CodeBlock>(fistBlock),
-                Second: reader.GetFieldValue<CodeBlock>(secondBlock),
+                First: reader.GetFieldValue<CodeBlock[]>(fistBlock),
+                Second: reader.GetFieldValue<CodeBlock[]>(secondBlock),
                 SimilarityScore: reader.GetDouble(similarityScore));
         }
     }
@@ -256,8 +259,8 @@ internal class AnalysisRepository : IAnalysisRepository
         select :analysis_id, 
                :fist_submission_id,
                :second_submission_id, 
-               s.first_code_blocks::code_block,
-               s.second_code_blocks::code_block,
+               json_populate_recordset(null::code_block, s.first_code_blocks),
+               json_populate_recordset(null::code_block, s.second_code_blocks),
                s.similarity_scores
         from unnest(:fist_code_blocks, :second_code_blocks, :similarity_scores) as s(first_code_blocks, second_code_blocks, similarity_scores);
         """;
@@ -278,8 +281,14 @@ internal class AnalysisRepository : IAnalysisRepository
                 .AddParameter("analysis_id", analysisId.Value)
                 .AddParameter("fist_submission_id", result.Data.FirstSubmissionId)
                 .AddParameter("second_submission_id", result.Data.SecondSubmissionId)
-                .AddParameter("fist_code_blocks", result.SimilarCodeBlocks.Select(x => x.First).ToArray())
-                .AddParameter("second_code_blocks", result.SimilarCodeBlocks.Select(x => x.Second).ToArray())
+                .AddJsonArrayParameter(
+                    "fist_code_blocks",
+                    result.SimilarCodeBlocks.Select(x => x.First),
+                    _serializerSettings)
+                .AddJsonArrayParameter(
+                    "second_code_blocks",
+                    result.SimilarCodeBlocks.Select(x => x.Second),
+                    _serializerSettings)
                 .AddParameter("similarity_scores", result.SimilarCodeBlocks.Select(x => x.SimilarityScore).ToArray());
 
             await codeBlocksCommand.ExecuteNonQueryAsync(cancellationToken);

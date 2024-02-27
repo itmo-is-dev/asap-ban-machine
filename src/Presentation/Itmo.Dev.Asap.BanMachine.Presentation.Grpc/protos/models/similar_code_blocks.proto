@@ -7,7 +7,7 @@ option csharp_namespace = "Itmo.Dev.Asap.BanMachine.Models";
 import "models/code_block.proto";
 
 message SimilarCodeBlocks {
-  CodeBlock first = 1;
-  CodeBlock second = 2;
+  repeated CodeBlock first = 1;
+  repeated CodeBlock second = 2;
   double similarity_score = 3;
 }

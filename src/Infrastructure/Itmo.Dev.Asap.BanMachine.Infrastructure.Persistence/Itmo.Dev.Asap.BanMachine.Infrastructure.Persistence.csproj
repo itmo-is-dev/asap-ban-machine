@@ -6,5 +6,6 @@
     <PackageReference Include="Itmo.Dev.Platform.Postgres" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="ronimizy.FluentSerialization.Extensions.NewtonsoftJson" />
   </ItemGroup>
 </Project>

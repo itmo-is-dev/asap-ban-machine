@@ -8,8 +8,8 @@ public static class SimilarCodeBlocksMapper
     {
         return new Models.SimilarCodeBlocks
         {
-            First = value.First.MapToGrpcModel(),
-            Second = value.Second.MapToGrpcModel(),
+            First = { value.First.Select(MapToGrpcModel) },
+            Second = { value.Second.Select(MapToGrpcModel) },
             SimilarityScore = value.SimilarityScore,
         };
     }
