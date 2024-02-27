@@ -25,39 +25,27 @@ def calculate_weighted_mean(scores):
     return weighted_mean
 
 
-def serialize_node(node, source_bytes):
-    print(node)
-    node_data = {
-        'start_point': {'row': node.start_point[0], 'column': node.start_point[1]},
-        'end_point': {'row': node.end_point[1], 'column': node.end_point[1]},
+def serialize_node(node, source_bytes, file_path):
+    content = source_bytes[node.start_byte:node.end_byte].decode('utf-8')
+    return {
+        "FilePath": file_path,
+        "LineFrom": node.start_point[0] + 1,  # Tree-sitter line numbers are 0-based; adding 1 to match the contract
+        "LineTo": node.end_point[0] + 1,
+        "Content": content
     }
-    try:
-        node_data['text'] = node.utf8_text(source_bytes).decode('utf-8')
-    except AttributeError:
-        pass
-    children = []
-    cursor = node.walk()
-    if cursor.goto_first_child():
-        while True:
-            children.append(serialize_node(cursor.node, source_bytes))
-            if not cursor.goto_next_sibling():
-                break
-    node_data['children'] = children
-    return node_data
 
 
 def compare_directories(dir1, dir2):
     print(f"Comparing directories: {dir1} and {dir2}")
 
     scores = []
-    all_suspicious_blocks = []
+    all_suspicious_blocks_info = []
 
     files1 = [os.path.join(root, file) for root, dirs, files in os.walk(dir1) for file in files if file.endswith('.cs')]
     files2 = [os.path.join(root, file) for root, dirs, files in os.walk(dir2) for file in files if file.endswith('.cs')]
 
-    total_pair_count = len(files1) * len(files2)
     counter = 1
-
+    total_pair_count = len(files1) * len(files2)
     excluded2 = set()
 
     for file1 in files1:
@@ -67,24 +55,29 @@ def compare_directories(dir1, dir2):
         for file2 in files2:
             if file2 in excluded2:
                 continue
-
             with open(file2, 'rb') as f2:
                 source_bytes2 = f2.read()
 
-            print(f"\n[{counter}/{total_pair_count}] -- Comparing .cs files: \nfirst: {file1} \nsecond: {file2}")
+            print(f"\nComparing .cs files: \nfirst: {file1} \nsecond: {file2}")
             similarity, suspicious_blocks, _, _ = detector.compare_files(file1, file2, source_bytes1, source_bytes2)
             scores.append(similarity)
 
-            all_suspicious_blocks.extend([(block, source_bytes1) for block in suspicious_blocks])
-
+            for block in suspicious_blocks:
+                all_suspicious_blocks_info.append({
+                    "file1": file1,
+                    "file2": file2,
+                    "source_bytes1": source_bytes1,
+                    "source_bytes2": source_bytes2,
+                    "block": block
+                })
             counter += 1
-
+            #
             if similarity >= 0.9:
                 print(f"Found similarity = {similarity}, excluding pair from further analysis")
                 excluded2.add(file2)
                 break
 
-    return scores, all_suspicious_blocks
+    return scores, all_suspicious_blocks_info
 
 
 def compare_zip_files(zip1, zip2, result_dir):
@@ -117,19 +110,23 @@ def compare_zip_files(zip1, zip2, result_dir):
 
     print(f"Writing block to file: {blocks_file}")
     with open(blocks_file, 'w') as f:
-        serialized_blocks = []
-        for block_with_bytes in suspicious_blocks_with_bytes:
-            block, source_bytes = block_with_bytes
-            serialized_node1 = serialize_node(block['node1'], source_bytes)
-            serialized_node2 = serialize_node(block['node2'], source_bytes)
+        final_blocks = []
+        for info in suspicious_blocks_with_bytes:
+            block = info["block"]
+            file1, file2 = info["file1"], info["file2"]
+            source_bytes1, source_bytes2 = info["source_bytes1"], info["source_bytes2"]
+
+            serialized_node1 = serialize_node(block['node1'], source_bytes1, file1)
+            serialized_node2 = serialize_node(block['node2'], source_bytes2, file2)
             similarity = float(block['similarity']) if isinstance(block['similarity'], np.floating) else block[
                 'similarity']
-            serialized_blocks.append({
-                'node1': serialized_node1,
-                'node2': serialized_node2,
-                'similarity': similarity
+
+            final_blocks.append({
+                "First": [serialized_node1],
+                "Second": [serialized_node2],
+                "SimilarityScore": similarity
             })
-        json.dump(serialized_blocks, f, indent=4)
+        json.dump(final_blocks, f, indent=4)
 
     return scores
 
