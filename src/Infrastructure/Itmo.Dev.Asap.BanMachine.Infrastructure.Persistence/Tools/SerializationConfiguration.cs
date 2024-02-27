@@ -9,10 +9,10 @@ public class SerializationConfiguration : ISerializationConfiguration
     {
         configurationBuilder.Type<CodeBlock>(type =>
         {
-            type.Property(x => x.FilePath).Called("code_block_file_path");
-            type.Property(x => x.LineFrom).Called("code_block_line_from");
-            type.Property(x => x.LineTo).Called("code_block_line_to");
-            type.Property(x => x.Content).Called("code_block_content");
+            type.Property(x => x.FilePath).Called("file_path");
+            type.Property(x => x.LineFrom).Called("line_from");
+            type.Property(x => x.LineTo).Called("line_to");
+            type.Property(x => x.Content).Called("content");
         });
     }
 }
