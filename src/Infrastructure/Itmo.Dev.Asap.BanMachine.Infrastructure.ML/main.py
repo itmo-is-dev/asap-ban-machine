@@ -11,6 +11,46 @@ from asap_ban_machine_model.detector import (CodePlagiarismDetector)
 detector = CodePlagiarismDetector()
 
 
+def calculate_weighted_mean(scores):
+    scores_array = np.array(scores)
+    print(scores)
+
+    weights = scores
+
+    if sum(scores_array) == 0:
+        return 0
+
+    weighted_mean = np.average(scores_array, weights=weights)
+
+    return weighted_mean
+
+
+def serialize_node(node, source_bytes):
+    if node.is_null():
+        return None
+    node_data = {
+        'type': node.type,
+        'start_byte': node.start_byte,
+        'end_byte': node.end_byte,
+        'start_point': {'row': node.start_point.row, 'column': node.start_point.column},
+        'end_point': {'row': node.end_point.row, 'column': node.end_point.column},
+        'is_named': node.is_named,
+    }
+    try:
+        node_data['text'] = node.utf8_text(source_bytes).decode('utf-8')
+    except AttributeError:
+        pass
+    children = []
+    cursor = node.walk()
+    if cursor.goto_first_child():
+        while True:
+            children.append(serialize_node(cursor.node, source_bytes))
+            if not cursor.goto_next_sibling():
+                break
+    node_data['children'] = children
+    return node_data
+
+
 def compare_directories(dir1, dir2):
     print(f"Comparing directories: {dir1} and {dir2}")
 
@@ -26,54 +66,40 @@ def compare_directories(dir1, dir2):
     excluded2 = set()
 
     for file1 in files1:
-        inner_counter = 0
+        with open(file1, 'rb') as f1:
+            source_bytes1 = f1.read()
 
         for file2 in files2:
-            inner_counter += 1
-
             if file2 in excluded2:
-                total_pair_count -= 1
                 continue
 
-            print(f"\n[{counter}/{total_pair_count})] -- Comparing .cs files: \nfirst: {file1} \nsecond: {file2}")
-            similarity, suspicious_blocks, file1, file2 = detector.compare_files(file1, file2)
+            with open(file2, 'rb') as f2:
+                source_bytes2 = f2.read()
+
+            print(f"\n[{counter}/{total_pair_count}] -- Comparing .cs files: \nfirst: {file1} \nsecond: {file2}")
+            similarity, suspicious_blocks, _, _ = detector.compare_files(file1, file2, source_bytes1, source_bytes2)
             scores.append(similarity)
 
-            all_suspicious_blocks.extend(suspicious_blocks)
+            all_suspicious_blocks.extend([(block, source_bytes1) for block in suspicious_blocks])
+
             counter += 1
 
             if similarity >= 0.9:
                 print(f"Found similarity = {similarity}, excluding pair from further analysis")
                 excluded2.add(file2)
-                total_pair_count -= len(files2) - inner_counter
                 break
 
     return scores, all_suspicious_blocks
 
 
-def calculate_weighted_mean(scores):
-    scores_array = np.array(scores)
-    print(scores)
-
-    weights = scores
-
-    if sum(scores_array) == 0:
-        return 0
-
-    weighted_mean = np.average(scores_array, weights=weights)
-
-    return weighted_mean
-
-
-def compare_zip_files(zip1, zip2):
+def compare_zip_files(zip1, zip2, result_dir):
     print(f"Comparing zip files: {zip1} and {zip2}")
     dir1 = tempfile.mkdtemp()
     dir2 = tempfile.mkdtemp()
 
-    if os.path.exists(args.result_dir):
-        shutil.rmtree(args.result_dir)
-
-    os.makedirs(args.result_dir)
+    if os.path.exists(result_dir):
+        shutil.rmtree(result_dir)
+    os.makedirs(result_dir)
 
     print(f"Extracting zip files to directories: {dir1} and {dir2}")
     with zipfile.ZipFile(zip1, 'r') as zip_ref:
@@ -81,28 +107,26 @@ def compare_zip_files(zip1, zip2):
     with zipfile.ZipFile(zip2, 'r') as zip_ref:
         zip_ref.extractall(dir2)
 
-    scores, suspicious_blocks = compare_directories(dir1, dir2)
-
-    # mean_score = statistics.mean(scores) if scores else 0
+    scores, suspicious_blocks_with_bytes = compare_directories(dir1, dir2)
     mean_score = calculate_weighted_mean(scores)
 
     shutil.rmtree(dir1)
     shutil.rmtree(dir2)
 
-    score_file = os.path.join(args.result_dir, 'similarity.txt')
-    blocks_file = os.path.join(args.result_dir, 'suspicious_blocks.json')
+    score_file = os.path.join(result_dir, 'similarity.txt')
+    blocks_file = os.path.join(result_dir, 'suspicious_blocks.json')
 
     print(f"Writing mean score to file: {score_file}")
-
     with open(score_file, 'w') as f:
         f.write(str(mean_score))
 
     print(f"Writing block to file: {blocks_file}")
-
     with open(blocks_file, 'w') as f:
-        json.dump(suspicious_blocks, f)
+        serialized_blocks = [serialize_node(node, source_bytes) for node, source_bytes in suspicious_blocks_with_bytes]
+        json.dump(serialized_blocks, f, indent=4)
 
     return scores
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Compare zip files for file similarity.')
@@ -115,4 +139,4 @@ if __name__ == "__main__":
 
     torch.set_num_threads(args.num_cores)
 
-    compare_zip_files(args.zip1, args.zip2)
+    compare_zip_files(args.zip1, args.zip2, args.result_dir)
