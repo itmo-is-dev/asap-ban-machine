@@ -26,15 +26,10 @@ def calculate_weighted_mean(scores):
 
 
 def serialize_node(node, source_bytes):
-    if node.is_null():
-        return None
+    print(node)
     node_data = {
-        'type': node.type,
-        'start_byte': node.start_byte,
-        'end_byte': node.end_byte,
-        'start_point': {'row': node.start_point.row, 'column': node.start_point.column},
-        'end_point': {'row': node.end_point.row, 'column': node.end_point.column},
-        'is_named': node.is_named,
+        'start_point': {'row': node.start_point[0], 'column': node.start_point[1]},
+        'end_point': {'row': node.end_point[1], 'column': node.end_point[1]},
     }
     try:
         node_data['text'] = node.utf8_text(source_bytes).decode('utf-8')
@@ -122,7 +117,18 @@ def compare_zip_files(zip1, zip2, result_dir):
 
     print(f"Writing block to file: {blocks_file}")
     with open(blocks_file, 'w') as f:
-        serialized_blocks = [serialize_node(node, source_bytes) for node, source_bytes in suspicious_blocks_with_bytes]
+        serialized_blocks = []
+        for block_with_bytes in suspicious_blocks_with_bytes:
+            block, source_bytes = block_with_bytes
+            serialized_node1 = serialize_node(block['node1'], source_bytes)
+            serialized_node2 = serialize_node(block['node2'], source_bytes)
+            similarity = float(block['similarity']) if isinstance(block['similarity'], np.floating) else block[
+                'similarity']
+            serialized_blocks.append({
+                'node1': serialized_node1,
+                'node2': serialized_node2,
+                'similarity': similarity
+            })
         json.dump(serialized_blocks, f, indent=4)
 
     return scores
