@@ -259,8 +259,8 @@ internal class AnalysisRepository : IAnalysisRepository
         select :analysis_id, 
                :fist_submission_id,
                :second_submission_id, 
-               json_populate_recordset(null::code_block, s.first_code_blocks),
-               json_populate_recordset(null::code_block, s.second_code_blocks),
+               json_populate_recordset(null::code_block, s.first_code_blocks::json),
+               json_populate_recordset(null::code_block, s.second_code_blocks::json),
                s.similarity_scores
         from unnest(:fist_code_blocks, :second_code_blocks, :similarity_scores) as s(first_code_blocks, second_code_blocks, similarity_scores);
         """;
