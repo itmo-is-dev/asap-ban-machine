@@ -7,6 +7,7 @@ import shutil
 import torch
 import numpy as np
 from asap_ban_machine_model.detector import (CodePlagiarismDetector)
+from pathlib import Path
 
 detector = CodePlagiarismDetector()
 
@@ -26,7 +27,8 @@ def calculate_weighted_mean(scores):
 
 
 def clear_path(file_path, temp_path, zip_path):
-    return file_path[len(os.path.join(temp_path, os.path.basename(zip_path))) + 1:]
+    print(f'clearing path: file_path = {file_path}, temp_path={temp_path}, zip_path={zip_path}')
+    return file_path[len(os.path.join(temp_path, Path(zip_path).stem)) + 1:]
 
 
 def serialize_node(node, source_bytes, file_path):
