@@ -26,9 +26,8 @@ def calculate_weighted_mean(scores):
     return weighted_mean
 
 
-def clear_path(file_path, temp_path, zip_path):
-    print(f'clearing path: file_path = {file_path}, temp_path={temp_path}, zip_path={zip_path}')
-    return file_path[len(os.path.join(temp_path, Path(zip_path).stem)) + 1:]
+def clear_path(file_path):
+    return os.path.join(*Path(file_path).parts[4:])
 
 
 def serialize_node(node, source_bytes, file_path):
@@ -122,8 +121,8 @@ def compare_zip_files(zip1, zip2, result_dir):
             file1, file2 = info["file1"], info["file2"]
             source_bytes1, source_bytes2 = info["source_bytes1"], info["source_bytes2"]
 
-            serialized_node1 = serialize_node(block['node1'], source_bytes1, clear_path(file1, dir1, zip1))
-            serialized_node2 = serialize_node(block['node2'], source_bytes2, clear_path(file2, dir2, zip2))
+            serialized_node1 = serialize_node(block['node1'], source_bytes1, clear_path(file1))
+            serialized_node2 = serialize_node(block['node2'], source_bytes2, clear_path(file2))
 
             similarity = float(block['similarity']) if isinstance(block['similarity'], np.floating) else block[
                 'similarity']
